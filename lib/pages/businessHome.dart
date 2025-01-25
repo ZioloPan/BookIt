@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class BusinessHomePage extends StatelessWidget {
-  const BusinessHomePage({super.key});
+  final String businessId;
+
+  const BusinessHomePage({super.key, required this.businessId});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,17 @@ class BusinessHomePage extends StatelessWidget {
                 'assets/images/logo.png',
                 width: 150,
                 height: 150,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                'Welcome, Business ID: $businessId',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -62,7 +75,9 @@ class BusinessHomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BusinessNavigationBar(),
+      bottomNavigationBar: BusinessNavigationBar(
+        businessId: businessId, // Przekazanie businessId do nawigacji
+      ),
     );
   }
 }

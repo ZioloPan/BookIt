@@ -1,0 +1,156 @@
+{
+  "businesses": [
+    {
+      "id": "1",
+      "password": "securePassword123",
+      "salonName": "Beauty Paradise",
+      "salonCategory": "Spa and Wellness",
+      "salonPhoneNumber": "987654321",
+      "salonEmail": "contact@beautyparadise.com",
+      "address": {
+        "city": "Warsaw",
+        "street": "Peace Avenue",
+        "localNumber": "42A",
+        "postCode": "00-001"
+      },
+      "nipNumber": "1234567890"
+    },
+    {
+      "id": "0c6d",
+      "password": "asd",
+      "salonName": "ss",
+      "salonCategory": "ss",
+      "salonPhoneNumber": "22",
+      "salonEmail": "",
+      "address": {
+        "city": "asd",
+        "street": "asd",
+        "localNumber": "22",
+        "postCode": "22"
+      },
+      "nipNumber": "22"
+    },
+    {
+      "id": "3821",
+      "password": "abc",
+      "salonName": "abcasd",
+      "salonCategory": "123",
+      "salonPhoneNumber": "323232",
+      "salonEmail": "34",
+      "address": {
+        "city": "123",
+        "street": "123",
+        "localNumber": "123",
+        "postCode": "123"
+      },
+      "nipNumber": "123asdasd"
+    },
+    {
+      "id": "9fd9",
+      "password": "test",
+      "salonName": "asdasd",
+      "salonCategory": "sadasd",
+      "salonPhoneNumber": "adsad",
+      "salonEmail": "test",
+      "address": {
+        "city": "asdasd",
+        "street": "asdas",
+        "localNumber": "dasd",
+        "postCode": "asdsad"
+      },
+      "nipNumber": "sad"
+    }
+  ],
+  "reviews": [
+    {
+      "businessId": "3821",
+      "personId": "101",
+      "rating": 5,
+      "comment": "Excellent service!"
+    },
+    {
+      "businessId": "3821",
+      "personId": "102",
+      "rating": 4,
+      "comment": "Very good, but room for improvement."
+    },
+    {
+      "businessId": "3821",
+      "personId": "103",
+      "rating": 5,
+      "comment": "Fantastic experience, highly recommend!"
+    },
+    {
+      "businessId": "9fd9",
+      "personId": "201",
+      "rating": 3,
+      "comment": "Average service, expected better."
+    },
+    {
+      "businessId": "9fd9",
+      "personId": "202",
+      "rating": 2,
+      "comment": "Not satisfied with the service quality."
+    }
+  ],
+  "persons": [
+    {
+      "id": "101",
+      "name": "John",
+      "lastName": "Doe",
+      "password": "password123",
+      "email": "john.doe@example.com",
+      "phone": "123456789"
+    },
+    {
+      "id": "102",
+      "name": "Jane",
+      "lastName": "Smith",
+      "password": "securePass456",
+      "email": "jane.smith@example.com",
+      "phone": "987654321"
+    },
+    {
+      "id": "103",
+      "name": "Alice",
+      "lastName": "Johnson",
+      "password": "password789",
+      "email": "alice.johnson@example.com",
+      "phone": "456123789"
+    },
+    {
+      "id": "201",
+      "name": "Bob",
+      "lastName": "Brown",
+      "password": "passBob321",
+      "email": "bob.brown@example.com",
+      "phone": "789321456"
+    },
+    {
+      "id": "202",
+      "name": "Charlie",
+      "lastName": "Davis",
+      "password": "charliePass",
+      "email": "charlie.davis@example.com",
+      "phone": "321654987"
+    }
+  ],
+  "employees": [
+    {
+      "id": "68e6",
+      "businessId": "3821",
+      "name": "asdsdf",
+      "lastName": "asdsddsf",
+      "email": "asddsfsdf",
+      "phone": "asdsfsd"
+    },
+    {
+      "id": "461e",
+      "businessId": "3821",
+      "name": "aaa",
+      "lastName": "aa",
+      "email": "aa",
+      "phone": "aaa"
+    }
+  ]
+}

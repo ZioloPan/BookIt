@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class DeleteEmployeePage extends StatelessWidget {
-  const DeleteEmployeePage({super.key});
+  final String businessId;
+
+  const DeleteEmployeePage({super.key, required this.businessId});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +77,9 @@ class DeleteEmployeePage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BusinessNavigationBar(),
+      bottomNavigationBar: BusinessNavigationBar(
+        businessId: businessId, // Przekazanie ID biznesu do paska nawigacji
+      ),
     );
   }
 }

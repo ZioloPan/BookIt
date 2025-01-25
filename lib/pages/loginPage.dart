@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/business-service.dart';
 import 'businessHome.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,24 +18,48 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;
+  List<Map<String, dynamic>> _businesses = [];
+  final BusinessRegisterService _service = BusinessRegisterService();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBusinesses();
+  }
+
+  Future<void> _fetchBusinesses() async {
+    final businesses = await _service.getAllBusinesses();
+    setState(() {
+      _businesses = businesses;
+    });
+  }
 
   void _handleContinue() {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    setState(() {
-      if (email == "test" && password.isNotEmpty) {
-        _errorMessage = null;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const BusinessHomePage(),
+    final matchedBusiness = _businesses.firstWhere(
+      (business) =>
+          business['salonEmail'] == email && business['password'] == password,
+      orElse: () => {},
+    );
+
+    if (matchedBusiness.isNotEmpty) {
+      // Przekierowanie, gdy znaleziono dopasowanie, z przekazaniem id biznesu
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BusinessHomePage(
+            businessId: matchedBusiness['id'], // Przekazanie ID biznesu
           ),
-        );
-      } else {
+        ),
+      );
+    } else {
+      // Wyświetlenie komunikatu o błędzie
+      setState(() {
         _errorMessage = "Incorrect email or password.";
-      }
-    });
+      });
+    }
   }
 
   @override

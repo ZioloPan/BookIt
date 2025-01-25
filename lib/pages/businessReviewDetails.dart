@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class BusinessReviewDetailsPage extends StatelessWidget {
-  final int id;
+  final String id; // Identyfikator recenzji
+  final String businessId; // Identyfikator biznesu
   final String clientName;
   final int stars;
   final String comment;
@@ -10,6 +11,7 @@ class BusinessReviewDetailsPage extends StatelessWidget {
   const BusinessReviewDetailsPage({
     super.key,
     required this.id,
+    required this.businessId,
     required this.clientName,
     required this.stars,
     required this.comment,
@@ -25,19 +27,36 @@ class BusinessReviewDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(
+              Center(
                 child: Text(
-                  'Review Details',
-                  style: TextStyle(
+                  'Review ID: $id',
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              Text(
+                'Client Name:',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 8),
               Text(
                 clientName,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Rating:',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -53,10 +72,10 @@ class BusinessReviewDetailsPage extends StatelessWidget {
                   );
                 }),
               ),
-              const SizedBox(height: 16),
-              const Text(
+              const SizedBox(height: 24),
+              Text(
                 'Comment:',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -67,14 +86,36 @@ class BusinessReviewDetailsPage extends StatelessWidget {
                 comment,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.black,
+                  color: Colors.black87,
+                ),
+              ),
+              const Spacer(),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Powrót do listy recenzji
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32.0,
+                      vertical: 14.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text('Back to Reviews'),
                 ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const BusinessNavigationBar(),
+      bottomNavigationBar: BusinessNavigationBar(
+        businessId: businessId, // Przekazanie ID biznesu do nawigacji
+      ),
     );
   }
 }

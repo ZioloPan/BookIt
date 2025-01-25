@@ -4,9 +4,12 @@ import 'welcome.dart';
 import 'addEmployee.dart';
 import 'editEmployee.dart';
 import 'deleteEmployee.dart';
+import 'editBusiness.dart'; // Importowanie nowej strony
 
 class BusinessProfilePage extends StatelessWidget {
-  const BusinessProfilePage({super.key});
+  final String businessId;
+
+  const BusinessProfilePage({super.key, required this.businessId});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +70,7 @@ class BusinessProfilePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AddEmployeePage(),
+                          builder: (context) => AddEmployeePage(businessId: businessId),
                         ),
                       );
                     },
@@ -96,7 +99,7 @@ class BusinessProfilePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const EditEmployeePage(),
+                          builder: (context) => EditEmployeePage(businessId: businessId),
                         ),
                       );
                     },
@@ -125,7 +128,7 @@ class BusinessProfilePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const DeleteEmployeePage(),
+                          builder: (context) => DeleteEmployeePage(businessId: businessId),
                         ),
                       );
                     },
@@ -159,7 +162,14 @@ class BusinessProfilePage extends StatelessWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditBusinessPage(businessId: businessId),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
@@ -199,7 +209,9 @@ class BusinessProfilePage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BusinessNavigationBar(),
+      bottomNavigationBar: BusinessNavigationBar(
+        businessId: businessId, // Przekazanie ID biznesu do paska nawigacji
+      ),
     );
   }
 }

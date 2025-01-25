@@ -5,7 +5,9 @@ import '../pages/businessCalendar.dart';
 import '../pages/businessReview.dart';
 
 class BusinessNavigationBar extends StatelessWidget {
-  const BusinessNavigationBar({super.key});
+  final String businessId;
+
+  const BusinessNavigationBar({super.key, required this.businessId});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class BusinessNavigationBar extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const BusinessHomePage(),
+                    builder: (context) => BusinessHomePage(businessId: businessId),
                   ),
                   (route) => false, // Usuwa wszystkie poprzednie trasy
                 );
@@ -36,7 +38,7 @@ class BusinessNavigationBar extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const BusinessCalendarPage(),
+                    builder: (context) => BusinessCalendarPage(businessId: businessId),
                   ),
                   (route) => false,
                 );
@@ -50,7 +52,7 @@ class BusinessNavigationBar extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const BusinessReviewPage(),
+                    builder: (context) => BusinessReviewPage(businessId: businessId),
                   ),
                   (route) => false,
                 );
@@ -64,7 +66,7 @@ class BusinessNavigationBar extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const BusinessProfilePage(),
+                    builder: (context) => BusinessProfilePage(businessId: businessId),
                   ),
                   (route) => false,
                 );

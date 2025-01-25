@@ -1,19 +1,53 @@
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
+import '../services/review-service.dart';
+import '../services/person-service.dart';
 import 'businessReviewDetails.dart';
 
-class BusinessReviewPage extends StatelessWidget {
-  const BusinessReviewPage({super.key});
+class BusinessReviewPage extends StatefulWidget {
+  final String businessId;
+
+  const BusinessReviewPage({super.key, required this.businessId});
+
+  @override
+  _BusinessReviewPageState createState() => _BusinessReviewPageState();
+}
+
+class _BusinessReviewPageState extends State<BusinessReviewPage> {
+  final ReviewService _reviewService = ReviewService();
+  final PersonService _personService = PersonService();
+  List<Map<String, dynamic>> _reviews = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReviews();
+  }
+
+  Future<void> _loadReviews() async {
+    try {
+      final reviews = await _reviewService.getAllReviews();
+      final filteredReviews = reviews.where((review) => review['businessId'] == widget.businessId).toList();
+
+      for (var review in filteredReviews) {
+        final person = await _personService.getPersonById(review['personId']);
+        if (person != null) {
+          review['clientName'] = '${person['name']} ${person['lastName']}';
+        } else {
+          review['clientName'] = 'Anonymous';
+        }
+      }
+
+      setState(() {
+        _reviews = filteredReviews;
+      });
+    } catch (e) {
+      print('Error loading reviews: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Przykładowe dane
-    final List<Map<String, dynamic>> reviews = [
-      {'id': 1, 'clientName': 'John Doe', 'stars': 5, 'comment': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'},
-      {'id': 2, 'clientName': 'Jane Smith', 'stars': 3, 'comment': 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-      {'id': 3, 'clientName': 'Alice Johnson', 'stars': 4, 'comment': 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'},
-    ];
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 171, 165),
       body: SafeArea(
@@ -34,46 +68,59 @@ class BusinessReviewPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: ListView.builder(
-                  itemCount: reviews.length,
-                  itemBuilder: (context, index) {
-                    final review = reviews[index];
-                    return ListTile(
-                      leading: const Icon(Icons.person, color: Colors.black),
-                      title: Text(
-                        review['clientName'],
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      subtitle: Row(
-                        children: List.generate(5, (i) {
-                          return Icon(
-                            i < review['stars'] ? Icons.star : Icons.star_border,
-                            color: Colors.yellow,
-                          );
-                        }),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BusinessReviewDetailsPage(
-                              id: review['id'],
-                              clientName: review['clientName'],
-                              stars: review['stars'],
-                              comment: review['comment'],
-                            ),
+                child: _reviews.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No reviews available.',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _reviews.length,
+                        itemBuilder: (context, index) {
+                          final review = _reviews[index];
+                          return ListTile(
+                            leading: const Icon(Icons.person, color: Colors.black),
+                            title: Text(
+                              review['clientName'] ?? 'Anonymous',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Row(
+                              children: List.generate(5, (i) {
+                                return Icon(
+                                  i < (review['rating'] ?? 0) ? Icons.star : Icons.star_border,
+                                  color: Colors.yellow,
+                                );
+                              }),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BusinessReviewDetailsPage(
+                                    id: review['id'],
+                                    clientName: review['clientName'] ?? 'Anonymous',
+                                    stars: review['rating'] ?? 0,
+                                    comment: review['comment'] ?? '',
+                                    businessId: widget.businessId, // Przekazanie businessId
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const BusinessNavigationBar(), // Zastąpienie
+      bottomNavigationBar: BusinessNavigationBar(
+        businessId: widget.businessId, // Przekazanie businessId do nawigacji
+      ),
     );
   }
 }

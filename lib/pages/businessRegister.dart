@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../services/business-service.dart';
+import 'loginPage.dart';
 
-class BusinessRegisterPage extends StatelessWidget {
+class BusinessRegisterPage extends StatefulWidget {
   final String email;
   final Color backgroundColor;
 
@@ -11,9 +13,40 @@ class BusinessRegisterPage extends StatelessWidget {
   });
 
   @override
+  _BusinessRegisterPageState createState() => _BusinessRegisterPageState();
+}
+
+class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
+  final _passwordController = TextEditingController();
+  final _repeatPasswordController = TextEditingController();
+  final _salonNameController = TextEditingController();
+  final _salonCategoryController = TextEditingController();
+  final _salonPhoneNumberController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _streetController = TextEditingController();
+  final _localNumberController = TextEditingController();
+  final _postCodeController = TextEditingController();
+  final _nipNumberController = TextEditingController();
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _repeatPasswordController.dispose();
+    _salonNameController.dispose();
+    _salonCategoryController.dispose();
+    _salonPhoneNumberController.dispose();
+    _cityController.dispose();
+    _streetController.dispose();
+    _localNumberController.dispose();
+    _postCodeController.dispose();
+    _nipNumberController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: widget.backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -28,17 +61,31 @@ class BusinessRegisterPage extends StatelessWidget {
                   height: 150,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Password", obscureText: true),
+                _buildTextField(controller: _passwordController, hintText: "Password", obscureText: true),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Repeat Password", obscureText: true),
+                _buildTextField(controller: _salonNameController, hintText: "Salon’s name"),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Salon’s name"),
+                _buildTextField(controller: _salonCategoryController, hintText: "Salon’s category"),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Salon’s category"),
+                _buildTextField(controller: _salonPhoneNumberController, hintText: "Salon’s phone number"),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Salon’s phone number"),
-                const SizedBox(height: 16),
-                _buildTextField(hintText: "Salon’s email", initialValue: email),
+                TextField(
+                  controller: TextEditingController(text: widget.email),
+                  enabled: false,
+                  decoration: InputDecoration(
+                    fillColor: Colors.grey[200],
+                    filled: true,
+                    hintText: "Salon’s email",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 14.0,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 const Text(
                   "Salon’s address",
@@ -49,20 +96,52 @@ class BusinessRegisterPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildTextField(hintText: "City"),
+                _buildTextField(controller: _cityController, hintText: "City"),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Street"),
+                _buildTextField(controller: _streetController, hintText: "Street"),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Local number"),
+                _buildTextField(controller: _localNumberController, hintText: "Local number"),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Post code"),
+                _buildTextField(controller: _postCodeController, hintText: "Post code"),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "NIP number"),
+                _buildTextField(controller: _nipNumberController, hintText: "NIP number"),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final service = BusinessRegisterService();
+
+                      try {
+                        await service.addBusiness(
+                          password: _passwordController.text,
+                          salonName: _salonNameController.text,
+                          salonCategory: _salonCategoryController.text,
+                          salonPhoneNumber: _salonPhoneNumberController.text,
+                          salonEmail: widget.email,
+                          city: _cityController.text,
+                          street: _streetController.text,
+                          localNumber: _localNumberController.text,
+                          postCode: _postCodeController.text,
+                          nipNumber: _nipNumberController.text,
+                        );
+
+                        // Przekierowanie po sukcesie
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(
+                              backgroundColor: widget.backgroundColor,
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        // Obsługa błędu
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
@@ -86,11 +165,12 @@ class BusinessRegisterPage extends StatelessWidget {
   }
 
   Widget _buildTextField({
+    required TextEditingController controller,
     required String hintText,
-    String? initialValue,
     bool obscureText = false,
   }) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         fillColor: Colors.white,
@@ -105,7 +185,6 @@ class BusinessRegisterPage extends StatelessWidget {
           vertical: 14.0,
         ),
       ),
-      controller: initialValue != null ? TextEditingController(text: initialValue) : null,
     );
   }
 }
