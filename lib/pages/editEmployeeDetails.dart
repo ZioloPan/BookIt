@@ -13,8 +13,7 @@ class EditEmployeeDetailsPage extends StatefulWidget {
   });
 
   @override
-  _EditEmployeeDetailsPageState createState() =>
-      _EditEmployeeDetailsPageState();
+  _EditEmployeeDetailsPageState createState() => _EditEmployeeDetailsPageState();
 }
 
 class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
@@ -93,7 +92,7 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context);
+        Navigator.pop(context, true); // Wróć z flagą sukcesu
       } else {
         throw Exception('Failed to update employee.');
       }
@@ -142,13 +141,13 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField('First Name', _nameController),
+                    _buildLabeledTextField('First Name', _nameController),
                     const SizedBox(height: 16),
-                    _buildTextField('Last Name', _lastNameController),
+                    _buildLabeledTextField('Last Name', _lastNameController),
                     const SizedBox(height: 16),
-                    _buildTextField('Email', _emailController),
+                    _buildLabeledTextField('Email', _emailController),
                     const SizedBox(height: 16),
-                    _buildTextField('Phone', _phoneController),
+                    _buildLabeledTextField('Phone', _phoneController),
                     const Spacer(),
                     SizedBox(
                       width: double.infinity,
@@ -178,22 +177,35 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
     );
   }
 
-  Widget _buildTextField(String hintText, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: hintText,
-        fillColor: Colors.white,
-        filled: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide.none,
+  Widget _buildLabeledTextField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 14.0,
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 14.0,
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

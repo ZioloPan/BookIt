@@ -12,11 +12,9 @@ class PersonService {
         final List<dynamic> persons = jsonDecode(response.body);
         return persons.cast<Map<String, dynamic>>();
       } else {
-        print('Failed to fetch persons: ${response.statusCode}');
         return [];
       }
     } catch (e) {
-      print('Error occurred while fetching persons: $e');
       return [];
     }
   }
@@ -28,11 +26,9 @@ class PersonService {
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
       } else {
-        print('Failed to fetch person: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error occurred while fetching person: $e');
       return null;
     }
   }
@@ -61,14 +57,11 @@ class PersonService {
         body: jsonEncode(personData),
       );
 
-      if (response.statusCode == 201) {
-        print('Person added successfully!');
-      } else {
-        print('Failed to add person: ${response.statusCode}');
-        print('Response: ${response.body}');
+      if (response.statusCode != 201) {
+        throw Exception('Failed to add person');
       }
     } catch (e) {
-      print('Error occurred while adding person: $e');
+      throw Exception('Error occurred while adding person');
     }
   }
 
@@ -83,15 +76,11 @@ class PersonService {
       );
 
       if (response.statusCode == 200) {
-        print('Person updated successfully!');
         return true;
       } else {
-        print('Failed to update person: ${response.statusCode}');
-        print('Response: ${response.body}');
         return false;
       }
     } catch (e) {
-      print('Error occurred while updating person: $e');
       return false;
     }
   }

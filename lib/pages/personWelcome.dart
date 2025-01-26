@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/person-service.dart'; // Serwis do zarządzania użytkownikami
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
 import 'personLogin.dart';
@@ -15,25 +16,57 @@ class PersonWelcomePage extends StatefulWidget {
 
 class _PersonWelcomePageState extends State<PersonWelcomePage> {
   final TextEditingController _emailController = TextEditingController();
+  final PersonService _personService = PersonService();
   String? _errorMessage;
+  List<Map<String, dynamic>> _allPersons = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPersons();
+  }
+
+  Future<void> _fetchPersons() async {
+    try {
+      final persons = await _personService.getAllPersons();
+      setState(() {
+        _allPersons = persons;
+      });
+    } catch (e) {
+      print('Error fetching persons: $e');
+    }
+  }
+
+  Future<void> _navigateToRegisterPage(String email) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PersonRegisterPage(
+          email: email,
+          backgroundColor: const Color.fromARGB(255, 169, 220, 223),
+        ),
+      ),
+    );
+
+    if (result == true) {
+      // Jeśli rejestracja zakończyła się sukcesem, przeładuj dane
+      _fetchPersons();
+    }
+  }
 
   void _handleContinue() {
     final email = _emailController.text.trim();
 
+    final isEmailUsed = _allPersons.any((person) => person['email'] == email);
+
     setState(() {
-      if (email == "test@email.com") {
+      if (email.isEmpty) {
+        _errorMessage = "Please enter your email.";
+      } else if (isEmailUsed) {
         _errorMessage = "Email already registered, Sign in!";
       } else {
         _errorMessage = null;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PersonRegisterPage(
-              email: email,
-              backgroundColor: const Color.fromARGB(255, 169, 220, 223),
-            ),
-          ),
-        );
+        _navigateToRegisterPage(email);
       }
     });
   }
@@ -56,11 +89,11 @@ class _PersonWelcomePageState extends State<PersonWelcomePage> {
                 height: 150,
               ),
               const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Create an Account',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -69,11 +102,11 @@ class _PersonWelcomePageState extends State<PersonWelcomePage> {
                 ),
               ),
               const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Enter your email to sign up for this app',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,

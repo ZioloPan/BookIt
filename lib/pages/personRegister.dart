@@ -20,16 +20,9 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _repeatPasswordController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
   final PersonService _personService = PersonService();
-
-  @override
-  void initState() {
-    super.initState();
-    _emailController.text = widget.email; // Ustaw email przekazany do strony
-  }
 
   @override
   void dispose() {
@@ -37,7 +30,6 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
     _lastNameController.dispose();
     _passwordController.dispose();
     _repeatPasswordController.dispose();
-    _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
@@ -47,10 +39,10 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
     final lastName = _lastNameController.text.trim();
     final password = _passwordController.text.trim();
     final repeatPassword = _repeatPasswordController.text.trim();
-    final email = _emailController.text.trim();
+    final email = widget.email.trim();
     final phone = _phoneController.text.trim();
 
-    if (name.isEmpty || lastName.isEmpty || password.isEmpty || email.isEmpty || phone.isEmpty) {
+    if (name.isEmpty || lastName.isEmpty || password.isEmpty || phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('All fields are required!'),
@@ -85,7 +77,8 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context); // Powrót po rejestracji
+
+      Navigator.pop(context, true); // Powrót z informacją, że dane się zmieniły
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -122,7 +115,7 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
                 const SizedBox(height: 16),
                 _buildTextField('Last Name', _lastNameController),
                 const SizedBox(height: 16),
-                _buildTextField('Email', _emailController),
+                _buildReadOnlyTextField('', widget.email),
                 const SizedBox(height: 16),
                 _buildTextField('Phone', _phoneController),
                 const SizedBox(height: 24),
@@ -160,6 +153,26 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
         fillColor: Colors.white,
         filled: true,
         hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 14.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReadOnlyTextField(String label, String value) {
+    return TextField(
+      controller: TextEditingController(text: value),
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: label,
+        fillColor: Colors.grey.shade300,
+        filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide.none,

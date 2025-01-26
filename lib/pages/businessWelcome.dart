@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/business-service.dart'; // Import serwisu dla biznesów
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
 import 'businessLogin.dart';
@@ -15,28 +16,54 @@ class BusinessWelcomePage extends StatefulWidget {
 
 class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
   final TextEditingController _emailController = TextEditingController();
+  final BusinessRegisterService _businessService = BusinessRegisterService();
   String? _errorMessage;
+  List<Map<String, dynamic>> _allBusinesses = [];
 
-  void _handleContinue() {
-    final email = _emailController.text.trim();
-
-    setState(() {
-      if (email == "test@email.com") {
-        _errorMessage = "Email already registered, Sign in!";
-      } else {
-        _errorMessage = null;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BusinessRegisterPage(
-              email: email,
-              backgroundColor: const Color.fromARGB(255, 244, 171, 165),
-            ),
-          ),
-        );
-      }
-    });
+  @override
+  void initState() {
+    super.initState();
+    _fetchBusinesses();
   }
+
+  Future<void> _fetchBusinesses() async {
+    try {
+      final businesses = await _businessService.getAllBusinesses();
+      setState(() {
+        _allBusinesses = businesses;
+      });
+    } catch (e) {
+      print('Error fetching businesses: $e');
+    }
+  }
+
+void _handleContinue() {
+  final email = _emailController.text.trim();
+
+  final isEmailUsed = _allBusinesses.any((business) => business['salonEmail'] == email);
+
+  setState(() {
+    if (email.isEmpty) {
+      _errorMessage = "Please enter your email.";
+    } else if (isEmailUsed) {
+      _errorMessage = "Email already registered, Sign in!";
+    } else {
+      _errorMessage = null;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BusinessRegisterPage(
+            email: email,
+            backgroundColor: const Color.fromARGB(255, 244, 171, 165),
+          ),
+        ),
+      ).then((_) {
+        // Przeładuj stronę BusinessWelcomePage po powrocie
+        _fetchBusinesses();
+      });
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +83,11 @@ class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
                 height: 150,
               ),
               const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Create an Account',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -69,11 +96,11 @@ class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
                 ),
               ),
               const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Enter your email to sign up for this app',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,

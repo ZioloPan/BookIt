@@ -83,41 +83,59 @@ class _PersonReviewPageState extends State<PersonReviewPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: _appointments.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No past appointments.',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(
+                child: Text(
+                  "Add review to your appointments,",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                )
-              : ListView.builder(
-                  itemCount: _appointments.length,
-                  itemBuilder: (context, index) {
-                    final appointment = _appointments[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        leading: const Icon(Icons.history, color: Colors.black),
-                        title: Text(
-                          '${appointment['businessName']} - ${appointment['employeeName']}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: _appointments.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No past appointments.',
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
                         ),
-                        subtitle: Text('Date: ${appointment['date']}\nTime: ${appointment['time']}'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PersonReviewDetailsPage(
-                                personId: widget.personId,
-                                businessId: appointment['businessId'],
+                      )
+                    : ListView.builder(
+                        itemCount: _appointments.length,
+                        itemBuilder: (context, index) {
+                          final appointment = _appointments[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ListTile(
+                              leading: const Icon(Icons.history, color: Colors.black),
+                              title: Text(
+                                '${appointment['businessName']} - ${appointment['employeeName']}',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
+                              subtitle: Text('Date: ${appointment['date']}\nTime: ${appointment['time']}'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PersonReviewDetailsPage(
+                                      personId: widget.personId,
+                                      businessId: appointment['businessId'],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },
                       ),
-                    );
-                  },
-                ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: PersonNavigationBar(personId: widget.personId),

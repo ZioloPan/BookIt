@@ -72,7 +72,10 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Business updated successfully!')),
+          const SnackBar(
+            content: Text('Business updated successfully!'),
+            backgroundColor: Colors.green,
+          ),
         );
         Navigator.pop(context);
       } else {

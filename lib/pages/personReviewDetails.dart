@@ -53,81 +53,91 @@ class _PersonReviewDetailsPageState extends State<PersonReviewDetailsPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 169, 220, 223),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Write a Review:',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _commentController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: 'Write your comment here...',
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Image(
+                    image: AssetImage('assets/images/logo.png'),
+                    width: 150,
+                    height: 150,
                   ),
-                  contentPadding: const EdgeInsets.all(16.0),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Rate the Business:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                const SizedBox(height: 16),
+                const Text(
+                  'Write a Review:',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: List.generate(5, (index) {
-                  return IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedStars = index + 1;
-                      });
-                    },
-                    icon: Icon(
-                      index < _selectedStars ? Icons.star : Icons.star_border,
-                      color: Colors.yellow,
-                      size: 32,
-                    ),
-                  );
-                }),
-              ),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _selectedStars > 0 && _commentController.text.isNotEmpty
-                      ? _submitReview
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14.0,
-                    ),
-                    shape: RoundedRectangleBorder(
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _commentController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: 'Write your comment here...',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
                     ),
+                    contentPadding: const EdgeInsets.all(16.0),
                   ),
-                  child: const Text('Submit Review'),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                const Text(
+                  'Rate the Business:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: List.generate(5, (index) {
+                    return IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedStars = index + 1;
+                        });
+                      },
+                      icon: Icon(
+                        index < _selectedStars ? Icons.star : Icons.star_border,
+                        color: Colors.yellow,
+                        size: 32,
+                      ),
+                    );
+                  }),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _selectedStars > 0 && _commentController.text.isNotEmpty
+                        ? _submitReview
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14.0,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text('Submit Review'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

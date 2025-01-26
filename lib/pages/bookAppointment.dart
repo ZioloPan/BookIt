@@ -88,7 +88,6 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
       setState(() {
         _selectedDate = picked;
       });
-      print('Selected date: ${_selectedDate!.toIso8601String()}');
     }
   }
 
@@ -131,121 +130,134 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 169, 220, 223),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DropdownButtonFormField<String>(
-                value: _selectedEmployee,
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 14.0,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Image(
+                    image: AssetImage('assets/images/logo.png'),
+                    width: 150,
+                    height: 150,
                   ),
                 ),
-                hint: const Text('Choose an employee'),
-                items: _employees.map((employee) {
-                  return DropdownMenuItem<String>(
-                    value: employee['id'],
-                    child: Text('${employee['name']} ${employee['lastName']}'),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedEmployee = value;
-                    _fetchAvailableSlots();
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  await _selectDate(context);
-                  await _fetchAvailableSlots();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    vertical: 14.0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                child: const Text('Select Date'),
-              ),
-              if (_selectedDate != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Text(
-                    'Selected date: ${_selectedDate!.toIso8601String().split('T').first}',
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedSlot,
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 14.0,
-                  ),
-                ),
-                hint: const Text('Choose a time slot'),
-                items: _availableSlots.map((slot) {
-                  return DropdownMenuItem<String>(
-                    value: slot,
-                    child: Text(slot),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedSlot = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 32),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _selectedEmployee != null &&
-                          _selectedDate != null &&
-                          _selectedSlot != null
-                      ? _bookAppointment
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: _selectedEmployee,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
                       vertical: 14.0,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  hint: const Text('Choose an employee'),
+                  items: _employees.map((employee) {
+                    return DropdownMenuItem<String>(
+                      value: employee['id'],
+                      child: Text('${employee['name']} ${employee['lastName']}'),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedEmployee = value;
+                      _fetchAvailableSlots();
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await _selectDate(context);
+                      await _fetchAvailableSlots();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 14.0,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text('Select Date'),
+                  ),
+                ),
+                if (_selectedDate != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: Text(
+                      'Selected date: ${_selectedDate!.toIso8601String().split('T').first}',
+                      style: const TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
-                  child: const Text('Book Appointment'),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: _selectedSlot,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 14.0,
+                    ),
+                  ),
+                  hint: const Text('Choose a time slot'),
+                  items: _availableSlots.map((slot) {
+                    return DropdownMenuItem<String>(
+                      value: slot,
+                      child: Text(slot),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedSlot = value;
+                    });
+                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 32),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _selectedEmployee != null &&
+                            _selectedDate != null &&
+                            _selectedSlot != null
+                        ? _bookAppointment
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 14.0,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text('Book Appointment'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: PersonNavigationBar(personId: widget.businessId),
+      bottomNavigationBar: PersonNavigationBar(personId: widget.personId),
     );
   }
 }

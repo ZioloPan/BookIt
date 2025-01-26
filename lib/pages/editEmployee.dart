@@ -99,9 +99,8 @@ class _EditEmployeePageState extends State<EditEmployeePage> {
                                   ),
                                 ],
                               ),
-                              onTap: () {
-                                print('Editing employee: ${employee['id']}');
-                                Navigator.push(
+                              onTap: () async {
+                                final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => EditEmployeeDetailsPage(
@@ -110,6 +109,10 @@ class _EditEmployeePageState extends State<EditEmployeePage> {
                                     ),
                                   ),
                                 );
+                                if (result == true) {
+                                  // Odśwież dane, jeśli zapisano zmiany
+                                  _loadEmployees();
+                                }
                               },
                             ),
                           );

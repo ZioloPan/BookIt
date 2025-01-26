@@ -54,45 +54,45 @@ class _EditPersonPageState extends State<EditPersonPage> {
       } else {
         setState(() {
           _isLoading = false;
-        });
-        setState(() {
           _errorMessage = 'Person not found.';
         });
       }
     } catch (e) {
-      print('Error loading person details: $e');
       setState(() {
-        _errorMessage = 'Failed to load person details: $e';
+        _isLoading = false;
+        _errorMessage = 'Failed to load person details.';
       });
     }
   }
 
   Future<void> _updatePerson() async {
+    if (_firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _phoneController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'All fields except password must be filled out.';
+      });
+      return;
+    }
+
+    if (_passwordController.text.isNotEmpty &&
+        _passwordController.text != _repeatPasswordController.text) {
+      setState(() {
+        _errorMessage = 'Passwords do not match.';
+      });
+      return;
+    }
+
     final updatedData = {
       'name': _firstNameController.text.trim(),
       'lastName': _lastNameController.text.trim(),
       'email': _emailController.text.trim(),
       'phone': _phoneController.text.trim(),
-      'password': _passwordController.text.trim(),
     };
 
-    if (_firstNameController.text.isEmpty ||
-        _lastNameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty ||
-        _passwordController.text.isEmpty ||
-        _repeatPasswordController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'All fields must be filled out.';
-      });
-      return;
-    }
-
-    if (_passwordController.text != _repeatPasswordController.text) {
-      setState(() {
-        _errorMessage = 'Passwords do not match.';
-      });
-      return;
+    if (_passwordController.text.isNotEmpty) {
+      updatedData['password'] = _passwordController.text.trim();
     }
 
     try {
@@ -103,16 +103,14 @@ class _EditPersonPageState extends State<EditPersonPage> {
           const SnackBar(
             content: Text('Person updated successfully!'),
             backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
           ),
         );
         Navigator.pop(context);
-      } else {
-        throw Exception('Failed to update person.');
       }
     } catch (e) {
-      print('Error updating person: $e');
       setState(() {
-        _errorMessage = 'Failed to update person: $e';
+        _errorMessage = 'Failed to update person.';
       });
     }
   }

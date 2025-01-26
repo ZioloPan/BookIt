@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/business-service.dart';
-import 'businessLogin.dart';
+import 'businessWelcome.dart'; // Import strony powitalnej dla biznesów
 
 class BusinessRegisterPage extends StatefulWidget {
   final String email;
@@ -43,6 +43,76 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
     super.dispose();
   }
 
+  Future<void> _registerBusiness() async {
+    if (_passwordController.text.isEmpty ||
+        _repeatPasswordController.text.isEmpty ||
+        _salonNameController.text.isEmpty ||
+        _salonCategoryController.text.isEmpty ||
+        _salonPhoneNumberController.text.isEmpty ||
+        _cityController.text.isEmpty ||
+        _streetController.text.isEmpty ||
+        _localNumberController.text.isEmpty ||
+        _postCodeController.text.isEmpty ||
+        _nipNumberController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All fields are required!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_passwordController.text != _repeatPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final service = BusinessRegisterService();
+
+    try {
+      await service.addBusiness(
+        password: _passwordController.text,
+        salonName: _salonNameController.text,
+        salonCategory: _salonCategoryController.text,
+        salonPhoneNumber: _salonPhoneNumberController.text,
+        salonEmail: widget.email,
+        city: _cityController.text,
+        street: _streetController.text,
+        localNumber: _localNumberController.text,
+        postCode: _postCodeController.text,
+        nipNumber: _nipNumberController.text,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Business registered successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Przekierowanie i przeładowanie strony powitalnej
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const BusinessWelcomePage(),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +132,8 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                 ),
                 const SizedBox(height: 16),
                 _buildTextField(controller: _passwordController, hintText: "Password", obscureText: true),
+                const SizedBox(height: 16),
+                _buildTextField(controller: _repeatPasswordController, hintText: "Repeat Password", obscureText: true),
                 const SizedBox(height: 16),
                 _buildTextField(controller: _salonNameController, hintText: "Salon’s name"),
                 const SizedBox(height: 16),
@@ -109,39 +181,7 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      final service = BusinessRegisterService();
-
-                      try {
-                        await service.addBusiness(
-                          password: _passwordController.text,
-                          salonName: _salonNameController.text,
-                          salonCategory: _salonCategoryController.text,
-                          salonPhoneNumber: _salonPhoneNumberController.text,
-                          salonEmail: widget.email,
-                          city: _cityController.text,
-                          street: _streetController.text,
-                          localNumber: _localNumberController.text,
-                          postCode: _postCodeController.text,
-                          nipNumber: _nipNumberController.text,
-                        );
-
-                        // Przekierowanie po sukcesie
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BusinessLoginPage(
-                              backgroundColor: widget.backgroundColor,
-                            ),
-                          ),
-                        );
-                      } catch (e) {
-                        // Obsługa błędu
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
-                      }
-                    },
+                    onPressed: _registerBusiness,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,

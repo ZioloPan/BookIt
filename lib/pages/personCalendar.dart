@@ -81,30 +81,48 @@ class _PersonCalendarPageState extends State<PersonCalendarPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: _appointments.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No upcoming appointments.',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: _appointments.length,
-                  itemBuilder: (context, index) {
-                    final appointment = _appointments[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        leading: const Icon(Icons.calendar_today, color: Colors.black),
-                        title: Text(
-                          '${appointment['businessName']} - ${appointment['employeeName']}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text('Date: ${appointment['date']}\nTime: ${appointment['time']}'),
-                      ),
-                    );
-                  },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Your appointments,',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: _appointments.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No upcoming appointments.',
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _appointments.length,
+                        itemBuilder: (context, index) {
+                          final appointment = _appointments[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ListTile(
+                              leading: const Icon(Icons.calendar_today, color: Colors.black),
+                              title: Text(
+                                '${appointment['businessName']} - ${appointment['employeeName']}',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text(
+                                'Date: ${appointment['date']}\nTime: ${appointment['time']}',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: PersonNavigationBar(personId: widget.personId),
