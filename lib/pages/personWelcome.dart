@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
-import 'loginPage.dart';
+import 'personLogin.dart';
 import 'personRegister.dart';
 
 import 'package:flutter/gestures.dart';
@@ -219,7 +219,7 @@ class _PersonWelcomePageState extends State<PersonWelcomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => LoginPage(
+                                      builder: (context) => PersonLoginPage(
                                         backgroundColor: const Color.fromARGB(255, 169, 220, 223),
                                       ),
                                     ),

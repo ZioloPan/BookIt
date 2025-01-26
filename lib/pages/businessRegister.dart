@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/business-service.dart';
-import 'loginPage.dart';
+import 'businessLogin.dart';
 
 class BusinessRegisterPage extends StatefulWidget {
   final String email;
@@ -130,7 +130,7 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LoginPage(
+                            builder: (context) => BusinessLoginPage(
                               backgroundColor: widget.backgroundColor,
                             ),
                           ),

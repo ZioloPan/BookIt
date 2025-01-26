@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../services/person-service.dart';
 
-class PersonRegisterPage extends StatelessWidget {
+class PersonRegisterPage extends StatefulWidget {
   final String email;
   final Color backgroundColor;
 
@@ -11,9 +12,94 @@ class PersonRegisterPage extends StatelessWidget {
   });
 
   @override
+  State<PersonRegisterPage> createState() => _PersonRegisterPageState();
+}
+
+class _PersonRegisterPageState extends State<PersonRegisterPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _repeatPasswordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  final PersonService _personService = PersonService();
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.text = widget.email; // Ustaw email przekazany do strony
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _lastNameController.dispose();
+    _passwordController.dispose();
+    _repeatPasswordController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _registerPerson() async {
+    final name = _nameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final password = _passwordController.text.trim();
+    final repeatPassword = _repeatPasswordController.text.trim();
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    if (name.isEmpty || lastName.isEmpty || password.isEmpty || email.isEmpty || phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All fields are required!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (password != repeatPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      await _personService.addPerson(
+        name: name,
+        lastName: lastName,
+        password: password,
+        email: email,
+        phone: phone,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Person registered successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context); // Powrót po rejestracji
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to register person: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: widget.backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -28,22 +114,22 @@ class PersonRegisterPage extends StatelessWidget {
                   height: 150,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Password", obscureText: true),
+                _buildTextField('Password', _passwordController, obscureText: true),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Repeat Password", obscureText: true),
+                _buildTextField('Repeat Password', _repeatPasswordController, obscureText: true),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Name"),
+                _buildTextField('Name', _nameController),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Last Name"),
+                _buildTextField('Last Name', _lastNameController),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Email", initialValue: email),
+                _buildTextField('Email', _emailController),
                 const SizedBox(height: 16),
-                _buildTextField(hintText: "Phone"),
+                _buildTextField('Phone', _phoneController),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _registerPerson,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
@@ -66,12 +152,9 @@ class PersonRegisterPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField({
-    required String hintText,
-    String? initialValue,
-    bool obscureText = false,
-  }) {
+  Widget _buildTextField(String hintText, TextEditingController controller, {bool obscureText = false}) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         fillColor: Colors.white,
@@ -86,7 +169,6 @@ class PersonRegisterPage extends StatelessWidget {
           vertical: 14.0,
         ),
       ),
-      controller: initialValue != null ? TextEditingController(text: initialValue) : null,
     );
   }
 }

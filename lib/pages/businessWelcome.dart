@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
-import 'loginPage.dart';
+import 'businessLogin.dart';
 import 'businessRegister.dart';
 
 import 'package:flutter/gestures.dart';
@@ -219,7 +219,7 @@ class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => LoginPage(
+                                      builder: (context) => BusinessLoginPage(
                                         backgroundColor: const Color.fromARGB(255, 244, 171, 165),
                                       ),
                                     ),

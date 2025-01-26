@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import '../services/business-service.dart';
 import 'businessHome.dart';
 
-class LoginPage extends StatefulWidget {
+class BusinessLoginPage extends StatefulWidget {
   final Color backgroundColor;
 
-  const LoginPage({
+  const BusinessLoginPage({
     super.key,
     required this.backgroundColor,
   });
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<BusinessLoginPage> createState() => _BusinessLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _BusinessLoginPageState extends State<BusinessLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;

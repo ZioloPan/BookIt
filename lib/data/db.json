@@ -16,141 +16,307 @@
       "nipNumber": "1234567890"
     },
     {
-      "id": "0c6d",
-      "password": "asd",
-      "salonName": "ss",
-      "salonCategory": "ss",
-      "salonPhoneNumber": "22",
-      "salonEmail": "",
+      "id": "2",
+      "password": "beauty123",
+      "salonName": "Elegance Beauty Studio",
+      "salonCategory": "Beauty Salon",
+      "salonPhoneNumber": "456789123",
+      "salonEmail": "info@elegancebeauty.com",
       "address": {
-        "city": "asd",
-        "street": "asd",
-        "localNumber": "22",
-        "postCode": "22"
+        "city": "Krakow",
+        "street": "Main Street",
+        "localNumber": "15B",
+        "postCode": "30-001"
       },
-      "nipNumber": "22"
+      "nipNumber": "9876543210"
     },
     {
-      "id": "3821",
-      "password": "abc",
-      "salonName": "abcasd",
-      "salonCategory": "123",
-      "salonPhoneNumber": "323232",
-      "salonEmail": "34",
+      "id": "3",
+      "password": "hairpro",
+      "salonName": "Hair Professionals",
+      "salonCategory": "Hair Salon",
+      "salonPhoneNumber": "567123456",
+      "salonEmail": "contact@hairpros.com",
       "address": {
-        "city": "123",
-        "street": "123",
-        "localNumber": "123",
-        "postCode": "123"
+        "city": "Gdansk",
+        "street": "Ocean Road",
+        "localNumber": "21",
+        "postCode": "80-001"
       },
-      "nipNumber": "123asdasd"
+      "nipNumber": "1122334455"
     },
     {
-      "id": "9fd9",
-      "password": "test",
-      "salonName": "asdasd",
-      "salonCategory": "sadasd",
-      "salonPhoneNumber": "adsad",
-      "salonEmail": "test",
+      "id": "4",
+      "password": "relaxnow",
+      "salonName": "Relax and Glow Spa",
+      "salonCategory": "Spa",
+      "salonPhoneNumber": "678321456",
+      "salonEmail": "welcome@relaxglow.com",
       "address": {
-        "city": "asdasd",
-        "street": "asdas",
-        "localNumber": "dasd",
-        "postCode": "asdsad"
+        "city": "Wroclaw",
+        "street": "Peaceful Lane",
+        "localNumber": "5C",
+        "postCode": "50-001"
       },
-      "nipNumber": "sad"
+      "nipNumber": "9988776655"
     }
   ],
   "reviews": [
     {
-      "businessId": "3821",
+      "businessId": "1",
       "personId": "101",
       "rating": 5,
-      "comment": "Excellent service!"
+      "comment": "Fantastic service! The staff was very professional and friendly."
     },
     {
-      "businessId": "3821",
+      "businessId": "1",
       "personId": "102",
       "rating": 4,
-      "comment": "Very good, but room for improvement."
+      "comment": "Great experience overall, but the waiting time could be shorter."
     },
     {
-      "businessId": "3821",
+      "businessId": "2",
       "personId": "103",
       "rating": 5,
-      "comment": "Fantastic experience, highly recommend!"
+      "comment": "Absolutely loved the ambiance and the quality of service!"
     },
     {
-      "businessId": "9fd9",
+      "businessId": "3",
       "personId": "201",
       "rating": 3,
-      "comment": "Average service, expected better."
+      "comment": "The haircut was decent, but not exactly what I wanted."
     },
     {
-      "businessId": "9fd9",
+      "businessId": "3",
       "personId": "202",
       "rating": 2,
-      "comment": "Not satisfied with the service quality."
+      "comment": "Unfortunately, the service did not meet my expectations."
+    },
+    {
+      "businessId": "4",
+      "personId": "101",
+      "rating": 4,
+      "comment": "Nice and relaxing spa, but the music was a bit too loud."
+    },
+    {
+      "businessId": "4",
+      "personId": "102",
+      "rating": 5,
+      "comment": "Amazing spa experience! I will definitely return."
+    },
+    {
+      "businessId": "2",
+      "personId": "103",
+      "rating": 5,
+      "comment": "Wonderful atmosphere and highly skilled professionals!"
+    },
+    {
+      "businessId": "1",
+      "personId": "201",
+      "rating": 4,
+      "comment": "The staff was very accommodating, but parking was an issue."
+    },
+    {
+      "businessId": "3",
+      "personId": "202",
+      "rating": 5,
+      "comment": "Best barber shop I've been to in years. Highly recommend!"
     }
   ],
   "persons": [
     {
       "id": "101",
-      "name": "John",
-      "lastName": "Doe",
-      "password": "password123",
-      "email": "john.doe@example.com",
+      "name": "Jan",
+      "lastName": "Kowalskiii",
+      "password": "test2",
+      "email": "test",
       "phone": "123456789"
     },
     {
       "id": "102",
-      "name": "Jane",
-      "lastName": "Smith",
+      "name": "Anna",
+      "lastName": "Nowak",
       "password": "securePass456",
-      "email": "jane.smith@example.com",
+      "email": "anna.nowak@example.com",
       "phone": "987654321"
     },
     {
       "id": "103",
-      "name": "Alice",
-      "lastName": "Johnson",
+      "name": "Ewa",
+      "lastName": "Wiśniewska",
       "password": "password789",
-      "email": "alice.johnson@example.com",
+      "email": "ewa.wisniewska@example.com",
       "phone": "456123789"
     },
     {
       "id": "201",
-      "name": "Bob",
-      "lastName": "Brown",
-      "password": "passBob321",
-      "email": "bob.brown@example.com",
+      "name": "Piotr",
+      "lastName": "Zieliński",
+      "password": "passPiotr321",
+      "email": "piotr.zielinski@example.com",
       "phone": "789321456"
     },
     {
       "id": "202",
-      "name": "Charlie",
-      "lastName": "Davis",
-      "password": "charliePass",
-      "email": "charlie.davis@example.com",
+      "name": "Katarzyna",
+      "lastName": "Jabłońska",
+      "password": "katarzynaPass",
+      "email": "katarzyna.jablonska@example.com",
       "phone": "321654987"
     }
   ],
   "employees": [
     {
-      "id": "68e6",
-      "businessId": "3821",
-      "name": "asdsdf",
-      "lastName": "asdsddsf",
-      "email": "asddsfsdf",
-      "phone": "asdsfsd"
+      "id": "101",
+      "businessId": "1",
+      "name": "Anna",
+      "lastName": "Kowalska",
+      "email": "anna.kowalska@beautyparadise.com",
+      "phone": "123456789"
     },
     {
-      "id": "461e",
-      "businessId": "3821",
-      "name": "aaa",
-      "lastName": "aa",
-      "email": "aa",
-      "phone": "aaa"
+      "id": "102",
+      "businessId": "1",
+      "name": "Marcin",
+      "lastName": "Nowak",
+      "email": "marcin.nowak@beautyparadise.com",
+      "phone": "987654321"
+    },
+    {
+      "id": "103",
+      "businessId": "2",
+      "name": "Kasia",
+      "lastName": "Zielinska",
+      "email": "kasia.zielinska@elegancebeauty.com",
+      "phone": "567123456"
+    },
+    {
+      "id": "104",
+      "businessId": "2",
+      "name": "Pawel",
+      "lastName": "Wrobel",
+      "email": "pawel.wrobel@elegancebeauty.com",
+      "phone": "765432198"
+    },
+    {
+      "id": "105",
+      "businessId": "3",
+      "name": "Dorota",
+      "lastName": "Majewska",
+      "email": "dorota.majewska@hairpros.com",
+      "phone": "456789123"
+    },
+    {
+      "id": "106",
+      "businessId": "3",
+      "name": "Adam",
+      "lastName": "Sikorski",
+      "email": "adam.sikorski@hairpros.com",
+      "phone": "654321987"
+    },
+    {
+      "id": "107",
+      "businessId": "4",
+      "name": "Ewa",
+      "lastName": "Wilk",
+      "email": "ewa.wilk@relaxglow.com",
+      "phone": "321654987"
+    },
+    {
+      "id": "108",
+      "businessId": "4",
+      "name": "Karol",
+      "lastName": "Borek",
+      "email": "karol.borek@relaxglow.com",
+      "phone": "789123456"
+    },
+    {
+      "id": "109",
+      "businessId": "3",
+      "name": "Monika",
+      "lastName": "Zawada",
+      "email": "monika.zawada@hairpros.com",
+      "phone": "987321654"
+    },
+    {
+      "id": "110",
+      "businessId": "2",
+      "name": "Tomasz",
+      "lastName": "Lis",
+      "email": "tomasz.lis@elegancebeauty.com",
+      "phone": "321987456"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "a001",
+      "employeeId": "101",
+      "personId": "201",
+      "date": "2025-01-26",
+      "time": "10:00"
+    },
+    {
+      "id": "a002",
+      "employeeId": "102",
+      "personId": "202",
+      "date": "2025-01-27",
+      "time": "11:00"
+    },
+    {
+      "id": "a003",
+      "employeeId": "103",
+      "personId": "101",
+      "date": "2025-01-28",
+      "time": "09:00"
+    },
+    {
+      "id": "a004",
+      "employeeId": "104",
+      "personId": "202",
+      "date": "2025-01-29",
+      "time": "13:00"
+    },
+    {
+      "id": "a005",
+      "employeeId": "105",
+      "personId": "201",
+      "date": "2025-01-30",
+      "time": "12:00"
+    },
+    {
+      "id": "a006",
+      "employeeId": "106",
+      "personId": "103",
+      "date": "2025-02-01",
+      "time": "11:00"
+    },
+    {
+      "id": "a007",
+      "employeeId": "107",
+      "personId": "101",
+      "date": "2025-01-31",
+      "time": "14:00"
+    },
+    {
+      "id": "a008",
+      "employeeId": "108",
+      "personId": "201",
+      "date": "2025-01-26",
+      "time": "15:00"
+    },
+    {
+      "id": "a009",
+      "employeeId": "109",
+      "personId": "202",
+      "date": "2025-01-25",
+      "time": "09:00"
+    },
+    {
+      "id": "a010",
+      "employeeId": "110",
+      "personId": "103",
+      "date": "2025-01-27",
+      "time": "10:00"
     }
   ]
 }

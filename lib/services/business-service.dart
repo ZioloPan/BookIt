@@ -68,6 +68,22 @@ class BusinessRegisterService {
     }
   }
 
+  Future<Map<String, dynamic>?> getBusinessById(String businessId) async {
+    try {
+      final response = await http.get(Uri.parse('$_baseUrl/$businessId'));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        print('Failed to fetch business: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error occurred while fetching business: $e');
+      return null;
+    }
+  }
+
   Future<bool> updateBusiness(String businessId, Map<String, dynamic> updatedData) async {
     try {
       final response = await http.patch(
