@@ -78,7 +78,7 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
         ),
       );
 
-      Navigator.pop(context, true); // Powrót z informacją, że dane się zmieniły
+      Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

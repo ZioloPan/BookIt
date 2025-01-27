@@ -92,7 +92,7 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context, true); // Wróć z flagą sukcesu
+        Navigator.pop(context, true);
       } else {
         throw Exception('Failed to update employee.');
       }
@@ -172,7 +172,7 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
               ),
             ),
       bottomNavigationBar: BusinessNavigationBar(
-        businessId: widget.businessId, // Przekazanie ID biznesu do nawigacji
+        businessId: widget.businessId,
       ),
     );
   }

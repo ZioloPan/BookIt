@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class BusinessReviewDetailsPage extends StatelessWidget {
-  final String id; // Identyfikator recenzji
-  final String businessId; // Identyfikator biznesu
+  final String id;
+  final String businessId;
   final String clientName;
   final int stars;
   final String comment;
@@ -91,7 +91,7 @@ class BusinessReviewDetailsPage extends StatelessWidget {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context); // Powrót do listy recenzji
+                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
@@ -113,7 +113,7 @@ class BusinessReviewDetailsPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BusinessNavigationBar(
-        businessId: businessId, // Przekazanie ID biznesu do nawigacji
+        businessId: businessId,
       ),
     );
   }

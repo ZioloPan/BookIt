@@ -4,7 +4,7 @@ import 'welcome.dart';
 import 'addEmployee.dart';
 import 'editEmployee.dart';
 import 'deleteEmployee.dart';
-import 'editBusiness.dart'; // Importowanie nowej strony
+import 'editBusiness.dart';
 
 class BusinessProfilePage extends StatelessWidget {
   final String businessId;
@@ -197,7 +197,7 @@ class BusinessProfilePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BusinessNavigationBar(
-        businessId: businessId, // Przekazanie ID biznesu do paska nawigacji
+        businessId: businessId,
       ),
     );
   }

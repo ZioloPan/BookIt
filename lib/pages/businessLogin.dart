@@ -45,17 +45,17 @@ class _BusinessLoginPageState extends State<BusinessLoginPage> {
     );
 
     if (matchedBusiness.isNotEmpty) {
-      // Przekierowanie, gdy znaleziono dopasowanie, z przekazaniem id biznesu
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => BusinessHomePage(
-            businessId: matchedBusiness['id'], // Przekazanie ID biznesu
+            businessId: matchedBusiness['id'],
           ),
         ),
       );
     } else {
-      // Wyświetlenie komunikatu o błędzie
+
       setState(() {
         _errorMessage = "Incorrect email or password.";
       });

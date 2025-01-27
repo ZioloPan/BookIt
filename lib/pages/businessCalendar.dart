@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/employee-service.dart';
 import '../services/appointment-service.dart';
-import '../services/person-service.dart'; // Import serwisu klientów
+import '../services/person-service.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class BusinessCalendarPage extends StatefulWidget {
@@ -16,12 +16,12 @@ class BusinessCalendarPage extends StatefulWidget {
 class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
   final AppointmentService _appointmentService = AppointmentService();
   final EmployeeService _employeeService = EmployeeService();
-  final PersonService _personService = PersonService(); // Dodano serwis klientów
+  final PersonService _personService = PersonService();
 
   List<Map<String, dynamic>> _appointments = [];
   List<Map<String, dynamic>> _filteredAppointments = [];
   List<Map<String, dynamic>> _employees = [];
-  List<Map<String, dynamic>> _persons = []; // Dodano listę klientów
+  List<Map<String, dynamic>> _persons = [];
   DateTime? _selectedDate;
 
   @override
@@ -34,21 +34,19 @@ class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
     try {
       final employees = await _employeeService.getAllEmployees();
       final appointments = await _appointmentService.getAllAppointments();
-      final persons = await _personService.getAllPersons(); // Pobierz dane klientów
+      final persons = await _personService.getAllPersons();
 
       setState(() {
-        // Filtruj pracowników dla tego biznesu
+
         _employees = employees
             .where((employee) => employee['businessId'] == widget.businessId)
             .toList();
 
-        // Filtruj wizyty dla tego biznesu
         final businessEmployeeIds = _employees.map((e) => e['id']).toSet();
         _appointments = appointments.where((appointment) {
           return businessEmployeeIds.contains(appointment['employeeId']);
         }).toList();
 
-        // Przechowaj klientów w stanie
         _persons = persons;
       });
     } catch (e) {
@@ -88,7 +86,6 @@ class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
         return appointment['date'] == selectedDateString;
       }).toList();
 
-      // Dodaj imię i nazwisko pracownika oraz klienta do każdej wizyty
       for (var appointment in _filteredAppointments) {
         final employee = _employees.firstWhere(
           (e) => e['id'] == appointment['employeeId'],

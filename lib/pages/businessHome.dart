@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/business-service.dart';
 import '../services/employee-service.dart';
 import '../services/appointment-service.dart';
-import '../services/person-service.dart'; // Import serwisu do obsługi klientów
+import '../services/person-service.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class BusinessHomePage extends StatefulWidget {
@@ -45,7 +45,7 @@ class _BusinessHomePageState extends State<BusinessHomePage> {
     try {
       final employees = await _employeeService.getAllEmployees();
       final appointments = await _appointmentService.getAllAppointments();
-      final persons = await _personService.getAllPersons(); // Pobierz dane klientów
+      final persons = await _personService.getAllPersons();
       final today = DateTime.now();
       final todayDateString = today.toIso8601String().split('T').first;
 

@@ -14,7 +14,6 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
   final _formKey = GlobalKey<FormState>();
   final BusinessRegisterService _service = BusinessRegisterService();
 
-  // Controllers for the form fields
   final TextEditingController _salonNameController = TextEditingController();
   final TextEditingController _salonCategoryController = TextEditingController();
   final TextEditingController _salonPhoneNumberController = TextEditingController();

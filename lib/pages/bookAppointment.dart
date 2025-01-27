@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/employee-service.dart'; // Importowanie serwisu dla pracowników
-import '../services/appointment-service.dart'; // Importowanie serwisu dla wizyt
-import '../widgets/personNavigationBar.dart'; // Importowanie navigation bar
-import 'personHome.dart'; // Importowanie strony głównej po zalogowaniu
+import '../services/employee-service.dart';
+import '../services/appointment-service.dart';
+import '../widgets/personNavigationBar.dart';
+import 'personHome.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   final String businessId;
@@ -73,7 +73,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
     setState(() {
       _availableSlots = allSlots.where((slot) => !occupiedSlots.contains(slot)).toList();
-      _selectedSlot = null; // Reset selected slot
+      _selectedSlot = null;
     });
   }
 

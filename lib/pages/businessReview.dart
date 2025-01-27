@@ -105,7 +105,7 @@ class _BusinessReviewPageState extends State<BusinessReviewPage> {
                                     clientName: review['clientName'] ?? 'Anonymous',
                                     stars: review['rating'] ?? 0,
                                     comment: review['comment'] ?? '',
-                                    businessId: widget.businessId, // Przekazanie businessId
+                                    businessId: widget.businessId,
                                   ),
                                 ),
                               );
@@ -119,7 +119,7 @@ class _BusinessReviewPageState extends State<BusinessReviewPage> {
         ),
       ),
       bottomNavigationBar: BusinessNavigationBar(
-        businessId: widget.businessId, // Przekazanie businessId do nawigacji
+        businessId: widget.businessId,
       ),
     );
   }

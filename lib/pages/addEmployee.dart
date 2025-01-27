@@ -125,7 +125,7 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         ),
       ),
       bottomNavigationBar: BusinessNavigationBar(
-        businessId: widget.businessId, // Przekazanie ID biznesu do paska nawigacji
+        businessId: widget.businessId,
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/business-service.dart';
-import 'businessWelcome.dart'; // Import strony powitalnej dla biznesów
+import 'businessWelcome.dart';
 
 class BusinessRegisterPage extends StatefulWidget {
   final String email;
@@ -96,7 +96,6 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
         ),
       );
 
-      // Przekierowanie i przeładowanie strony powitalnej
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

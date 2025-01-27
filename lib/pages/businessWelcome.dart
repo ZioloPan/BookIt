@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/business-service.dart'; // Import serwisu dla biznesów
+import '../services/business-service.dart';
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
 import 'businessLogin.dart';
@@ -58,7 +58,6 @@ void _handleContinue() {
           ),
         ),
       ).then((_) {
-        // Przeładuj stronę BusinessWelcomePage po powrocie
         _fetchBusinesses();
       });
     }

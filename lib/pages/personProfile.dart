@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/personNavigationBar.dart';
 import 'welcome.dart';
-import 'editPerson.dart'; // Import strony edycji profilu osoby
+import 'editPerson.dart';
 
 class PersonProfilePage extends StatelessWidget {
   final String personId;
@@ -11,7 +11,7 @@ class PersonProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 169, 220, 223), // Kolor dla osób
+      backgroundColor: const Color.fromARGB(255, 169, 220, 223),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -45,7 +45,7 @@ class PersonProfilePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditPersonPage(personId: personId), // Strona edycji profilu
+                          builder: (context) => EditPersonPage(personId: personId),
                         ),
                       );
                     },
@@ -74,13 +74,13 @@ class PersonProfilePage extends StatelessWidget {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const WelcomePage(), // Powrót do ekranu powitalnego
+                          builder: (context) => const WelcomePage(),
                         ),
                         (route) => false,
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Czerwony kolor dla przycisku Logout
+                      backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -100,7 +100,7 @@ class PersonProfilePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: PersonNavigationBar(
-        personId: personId, // Przekazanie ID osoby do paska nawigacji
+        personId: personId,
       ),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widgets/personNavigationBar.dart'; // Importowanie navigation bar
-import '../services/business-service.dart'; // Import serwisu
-import '../services/person-service.dart'; // Import serwisu dla osób
-import 'bookAppointment.dart'; // Importowanie strony BookAppointment
+import '../widgets/personNavigationBar.dart';
+import '../services/business-service.dart';
+import '../services/person-service.dart';
+import 'bookAppointment.dart';
 
 class PersonHomePage extends StatefulWidget {
   final String personId;

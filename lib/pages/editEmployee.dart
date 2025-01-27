@@ -110,7 +110,6 @@ class _EditEmployeePageState extends State<EditEmployeePage> {
                                   ),
                                 );
                                 if (result == true) {
-                                  // Odśwież dane, jeśli zapisano zmiany
                                   _loadEmployees();
                                 }
                               },
@@ -124,7 +123,7 @@ class _EditEmployeePageState extends State<EditEmployeePage> {
         ),
       ),
       bottomNavigationBar: BusinessNavigationBar(
-        businessId: widget.businessId, // Przekazanie ID biznesu do paska nawigacji
+        businessId: widget.businessId,
       ),
     );
   }

@@ -160,7 +160,7 @@ class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
               ),
       ),
       bottomNavigationBar: BusinessNavigationBar(
-        businessId: widget.businessId, // Przekazanie ID biznesu do paska nawigacji
+        businessId: widget.businessId,
       ),
     );
   }

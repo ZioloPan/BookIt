@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/person-service.dart'; // Serwis do zarządzania użytkownikami
+import '../services/person-service.dart';
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
 import 'personLogin.dart';
@@ -49,7 +49,6 @@ class _PersonWelcomePageState extends State<PersonWelcomePage> {
     );
 
     if (result == true) {
-      // Jeśli rejestracja zakończyła się sukcesem, przeładuj dane
       _fetchPersons();
     }
   }

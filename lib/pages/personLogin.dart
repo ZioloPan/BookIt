@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/person-service.dart';
-import 'personHome.dart'; // Strona główna dla osoby po zalogowaniu
+import 'personHome.dart';
 
 class PersonLoginPage extends StatefulWidget {
   final Color backgroundColor;
@@ -44,17 +44,15 @@ class _PersonLoginPageState extends State<PersonLoginPage> {
     );
 
     if (matchedPerson.isNotEmpty) {
-      // Przekierowanie, gdy znaleziono dopasowanie
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => PersonHomePage(
-            personId: matchedPerson['id'], // Przekazanie ID osoby
+            personId: matchedPerson['id'],
           ),
         ),
       );
     } else {
-      // Wyświetlenie komunikatu o błędzie
       setState(() {
         _errorMessage = "Incorrect email or password.";
       });

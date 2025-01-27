@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/review-service.dart'; // Importowanie serwisu dla recenzji
-import '../widgets/personNavigationBar.dart'; // Importowanie navigation bar
+import '../services/review-service.dart';
+import '../widgets/personNavigationBar.dart';
 
 class PersonReviewDetailsPage extends StatefulWidget {
   final String personId;

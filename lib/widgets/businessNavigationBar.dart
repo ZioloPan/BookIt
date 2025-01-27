@@ -12,8 +12,8 @@ class BusinessNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      color: const Color.fromARGB(255, 255, 241, 208), // Kremowy kolor
-      shape: const CircularNotchedRectangle(), // Separacja wizualna
+      color: const Color.fromARGB(255, 255, 241, 208),
+      shape: const CircularNotchedRectangle(),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
@@ -26,7 +26,7 @@ class BusinessNavigationBar extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BusinessHomePage(businessId: businessId),
                   ),
-                  (route) => false, // Usuwa wszystkie poprzednie trasy
+                  (route) => false,
                 );
               },
               icon: const Icon(Icons.home),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../services/appointment-service.dart'; // Importowanie serwisu dla wizyt
-import '../services/employee-service.dart'; // Importowanie serwisu dla pracowników
-import '../services/business-service.dart'; // Importowanie serwisu dla biznesów
-import '../widgets/personNavigationBar.dart'; // Importowanie navigation bar
-import 'personReviewDetails.dart'; // Importowanie strony szczegółów
+import '../services/appointment-service.dart';
+import '../services/employee-service.dart';
+import '../services/business-service.dart';
+import '../widgets/personNavigationBar.dart';
+import 'personReviewDetails.dart';
 
 class PersonReviewPage extends StatefulWidget {
   final String personId;

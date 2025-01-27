@@ -10,7 +10,6 @@ class WelcomePage extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          // Sekcja po lewej
           Expanded(
             child: Container(
               color: const Color.fromARGB(255, 169, 220, 223),
@@ -54,7 +53,6 @@ class WelcomePage extends StatelessWidget {
             ),
           ),
 
-          // Sekcja po prawej
           Expanded(
             child: Container(
               color: const Color.fromARGB(255, 244, 171, 165),
