@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../config.dart';
+
 class EmployeeService {
-  final String _baseUrl = 'http://192.168.100.12:3000/employees';
+  final String _baseUrl = '${Config.baseUrl}/employees';
 
   Future<List<Map<String, dynamic>>> getAllEmployees() async {
     try {
