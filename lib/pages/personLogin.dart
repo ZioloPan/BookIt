@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/person-service.dart';
+import '../services/login-service.dart';
 import 'personHome.dart';
+import '../auth/auth_storage.dart';
 
 class PersonLoginPage extends StatefulWidget {
   final Color backgroundColor;
@@ -17,44 +18,72 @@ class PersonLoginPage extends StatefulWidget {
 class _PersonLoginPageState extends State<PersonLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Komunikat błędu (np. nieprawidłowe dane do logowania)
   String? _errorMessage;
-  List<Map<String, dynamic>> _persons = [];
-  final PersonService _personService = PersonService();
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchPersons();
-  }
+  // Tworzymy instancję LoginService
+  final LoginService _loginService = LoginService();
 
-  Future<void> _fetchPersons() async {
-    final persons = await _personService.getAllPersons();
-    setState(() {
-      _persons = persons;
-    });
-  }
-
-  void _handleContinue() {
+  /// Obsługa przycisku "Continue"
+  Future<void> _handleContinue() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    final matchedPerson = _persons.firstWhere(
-      (person) => person['email'] == email && person['password'] == password,
-      orElse: () => {},
+    print('email: $email');
+    print('password: $password');
+
+    // Wywołujemy logowanie w serwisie:
+    final loginResponse = await _loginService.login(
+      email: email,
+      password: password,
     );
 
-    if (matchedPerson.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PersonHomePage(
-            personId: matchedPerson['id'],
+    if (loginResponse != null) {
+      // Załóżmy, że loginResponse ma strukturę:
+      // {
+      //   "token": "...",
+      //   "user": {
+      //     "id": 2,
+      //     "firstName": "Krzysztof",
+      //     ...
+      //   }
+      // }
+      final userMap = loginResponse['user'] as Map<String, dynamic>?;
+      final token = loginResponse['token'];
+
+      await storeToken(token);
+      print('Usermap: $userMap');
+      print('token: $token');
+
+      if (isTokenExpired(token)) {
+        print('Token is expired');
+      } else {
+        print('Token is valid');
+      }
+      
+      // Upewniamy się, że mamy userMap z polem "id"
+      if (userMap != null && userMap['id'] != null) {
+        // Konwertujemy ID na String, bo PersonHomePage oczekuje typu String
+        final personId = userMap['id'].toString();
+
+        // Przejdź do PersonHomePage (lub innej strony po zalogowaniu)
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PersonHomePage(personId: personId),
           ),
-        ),
-      );
+        );
+      } else {
+        // Brak usera lub ID
+        setState(() {
+          _errorMessage = 'Brak danych użytkownika w odpowiedzi serwera.';
+        });
+      }
     } else {
+      // Logowanie nieudane (null zwrócone przez loginService)
       setState(() {
-        _errorMessage = "Incorrect email or password.";
+        _errorMessage = 'Incorrect email or password.';
       });
     }
   }

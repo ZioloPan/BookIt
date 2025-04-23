@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PersonService {
-  final String _baseUrl = 'http://192.168.100.12:3000/persons';
+  final String _baseUrl = 'http://10.0.2.2:8080/login';
 
   Future<List<Map<String, dynamic>>> getAllPersons() async {
     try {

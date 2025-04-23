@@ -3,6 +3,7 @@ import '../widgets/personNavigationBar.dart';
 import '../services/business-service.dart';
 import '../services/person-service.dart';
 import 'bookAppointment.dart';
+import '../auth/auth_storage.dart';
 
 class PersonHomePage extends StatefulWidget {
   final String personId;
