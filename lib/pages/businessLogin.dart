@@ -19,7 +19,7 @@ class _BusinessLoginPageState extends State<BusinessLoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;
   List<Map<String, dynamic>> _businesses = [];
-  final BusinessRegisterService _service = BusinessRegisterService();
+  final BusinessService _service = BusinessService();
 
   @override
   void initState() {

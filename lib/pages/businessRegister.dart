@@ -27,6 +27,8 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
   final _localNumberController = TextEditingController();
   final _postCodeController = TextEditingController();
   final _nipNumberController = TextEditingController();
+  final _latitudeController = TextEditingController();
+  final _longitudeController = TextEditingController();
 
   @override
   void dispose() {
@@ -40,6 +42,8 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
     _localNumberController.dispose();
     _postCodeController.dispose();
     _nipNumberController.dispose();
+    _latitudeController.dispose();
+    _longitudeController.dispose();
     super.dispose();
   }
 
@@ -53,7 +57,9 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
         _streetController.text.isEmpty ||
         _localNumberController.text.isEmpty ||
         _postCodeController.text.isEmpty ||
-        _nipNumberController.text.isEmpty) {
+        _nipNumberController.text.isEmpty ||
+        _latitudeController.text.isEmpty ||
+        _longitudeController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('All fields are required!'),
@@ -73,7 +79,7 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
       return;
     }
 
-    final service = BusinessRegisterService();
+    final service = BusinessService();
 
     try {
       await service.addBusiness(
@@ -87,6 +93,8 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
         localNumber: _localNumberController.text,
         postCode: _postCodeController.text,
         nipNumber: _nipNumberController.text,
+        latitude: double.parse(_latitudeController.text),
+        longitude: double.parse(_longitudeController.text),
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -176,6 +184,10 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                 _buildTextField(controller: _postCodeController, hintText: "Post code"),
                 const SizedBox(height: 16),
                 _buildTextField(controller: _nipNumberController, hintText: "NIP number"),
+                const SizedBox(height: 16),
+                _buildTextField(controller: _latitudeController, hintText: "Latitude"),
+                const SizedBox(height: 16),
+                _buildTextField(controller: _longitudeController, hintText: "Longitude"),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,

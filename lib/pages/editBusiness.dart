@@ -12,7 +12,7 @@ class EditBusinessPage extends StatefulWidget {
 
 class _EditBusinessPageState extends State<EditBusinessPage> {
   final _formKey = GlobalKey<FormState>();
-  final BusinessRegisterService _service = BusinessRegisterService();
+  final BusinessService _service = BusinessService();
 
   final TextEditingController _salonNameController = TextEditingController();
   final TextEditingController _salonCategoryController = TextEditingController();
@@ -23,6 +23,8 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
   final TextEditingController _localNumberController = TextEditingController();
   final TextEditingController _postCodeController = TextEditingController();
   final TextEditingController _nipNumberController = TextEditingController();
+  final TextEditingController _latitudeController = TextEditingController();
+  final TextEditingController _longitudeController = TextEditingController();
 
   @override
   void initState() {
@@ -45,6 +47,8 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
         _localNumberController.text = business['address']['localNumber'] ?? '';
         _postCodeController.text = business['address']['postCode'] ?? '';
         _nipNumberController.text = business['nipNumber'] ?? '';
+        _latitudeController.text = business['latitude']?.toString() ?? '';
+        _longitudeController.text = business['longitude']?.toString() ?? '';
       });
     } catch (e) {
       print('Error fetching business details: $e');
@@ -65,6 +69,8 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
           'postCode': _postCodeController.text,
         },
         'nipNumber': _nipNumberController.text,
+        'latitude': double.parse(_latitudeController.text),
+        'longitude': double.parse(_longitudeController.text),
       };
 
       final success = await _service.updateBusiness(widget.businessId, updatedData);
@@ -96,6 +102,8 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
     _localNumberController.dispose();
     _postCodeController.dispose();
     _nipNumberController.dispose();
+    _latitudeController.dispose();
+    _longitudeController.dispose();
     super.dispose();
   }
 
@@ -127,6 +135,10 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
                 _buildLabeledTextField('Post Code', _postCodeController, false),
                 const SizedBox(height: 16),
                 _buildLabeledTextField('NIP Number', _nipNumberController, false),
+                const SizedBox(height: 16),
+                _buildLabeledTextField('Latitude', _latitudeController, false, TextInputType.number),
+                const SizedBox(height: 16),
+                _buildLabeledTextField('Longitude', _longitudeController, false, TextInputType.number),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import '../services/business-service.dart';
 import '../services/employee-service.dart';
 import '../services/appointment-service.dart';
 import '../widgets/personNavigationBar.dart';
@@ -21,9 +24,12 @@ class BookAppointmentPage extends StatefulWidget {
 class _BookAppointmentPageState extends State<BookAppointmentPage> {
   final EmployeeService _employeeService = EmployeeService();
   final AppointmentService _appointmentService = AppointmentService();
+  final BusinessService _businessService = BusinessService();
 
   List<Map<String, dynamic>> _employees = [];
   List<String> _availableSlots = [];
+  double? _businessLatitude;
+  double? _businessLongitude;
 
   String? _selectedEmployee;
   DateTime? _selectedDate;
@@ -33,6 +39,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   void initState() {
     super.initState();
     _fetchEmployees();
+    _fetchBusinessData();
   }
 
   Future<void> _fetchEmployees() async {
@@ -48,6 +55,27 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to load employees: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _fetchBusinessData() async {
+    try {
+      final business = await _businessService.getBusinessById(widget.businessId);
+      if (business == null) {
+        throw Exception('Business not found');
+      }
+      setState(() {
+        _businessLatitude = business['latitude'];
+        _businessLongitude = business['longitude'];
+      });
+    } catch (e) {
+      print('Error loading business location: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load business location: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -143,6 +171,35 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                     height: 150,
                   ),
                 ),
+                const SizedBox(height: 16),
+                if (_businessLatitude != null && _businessLongitude != null)
+                  SizedBox(
+                    height: 250,
+                    child: FlutterMap(
+                      options: MapOptions(
+                        center: LatLng(_businessLatitude!, _businessLongitude!),
+                        zoom: 15.0,
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          subdomains: ['a', 'b', 'c'],
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: LatLng(_businessLatitude!, _businessLongitude!),
+                              builder: (ctx) => const Icon(
+                                Icons.location_pin,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   value: _selectedEmployee,

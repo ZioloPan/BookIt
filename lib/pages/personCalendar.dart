@@ -19,7 +19,7 @@ class PersonCalendarPage extends StatefulWidget {
 class _PersonCalendarPageState extends State<PersonCalendarPage> {
   final AppointmentService _appointmentService = AppointmentService();
   final EmployeeService _employeeService = EmployeeService();
-  final BusinessRegisterService _businessService = BusinessRegisterService();
+  final BusinessService _businessService = BusinessService();
 
   List<Map<String, dynamic>> _appointments = [];
 
