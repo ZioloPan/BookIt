@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../services/business-service.dart';
 
 class EditBusinessPage extends StatefulWidget {
@@ -23,8 +25,8 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
   final TextEditingController _localNumberController = TextEditingController();
   final TextEditingController _postCodeController = TextEditingController();
   final TextEditingController _nipNumberController = TextEditingController();
-  final TextEditingController _latitudeController = TextEditingController();
-  final TextEditingController _longitudeController = TextEditingController();
+
+  LatLng? _selectedLocation;
 
   @override
   void initState() {
@@ -47,8 +49,9 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
         _localNumberController.text = business['address']['localNumber'] ?? '';
         _postCodeController.text = business['address']['postCode'] ?? '';
         _nipNumberController.text = business['nipNumber'] ?? '';
-        _latitudeController.text = business['latitude']?.toString() ?? '';
-        _longitudeController.text = business['longitude']?.toString() ?? '';
+        final lat = business['latitude']?.toDouble();
+        final lon = business['longitude']?.toDouble();
+        _selectedLocation = LatLng(lat, lon);
       });
     } catch (e) {
       print('Error fetching business details: $e');
@@ -56,7 +59,7 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
   }
 
   Future<void> _updateBusiness() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _selectedLocation != null) {
       final updatedData = {
         'salonName': _salonNameController.text,
         'salonCategory': _salonCategoryController.text,
@@ -69,8 +72,8 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
           'postCode': _postCodeController.text,
         },
         'nipNumber': _nipNumberController.text,
-        'latitude': double.parse(_latitudeController.text),
-        'longitude': double.parse(_longitudeController.text),
+        'latitude': _selectedLocation!.latitude,
+        'longitude': _selectedLocation!.longitude,
       };
 
       final success = await _service.updateBusiness(widget.businessId, updatedData);
@@ -102,8 +105,6 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
     _localNumberController.dispose();
     _postCodeController.dispose();
     _nipNumberController.dispose();
-    _latitudeController.dispose();
-    _longitudeController.dispose();
     super.dispose();
   }
 
@@ -136,9 +137,59 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
                 const SizedBox(height: 16),
                 _buildLabeledTextField('NIP Number', _nipNumberController, false),
                 const SizedBox(height: 16),
-                _buildLabeledTextField('Latitude', _latitudeController, false, TextInputType.number),
-                const SizedBox(height: 16),
-                _buildLabeledTextField('Longitude', _longitudeController, false, TextInputType.number),
+                const Text(
+                  "Pick salon location on map",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 250,
+                  child: _selectedLocation == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : FlutterMap(
+                          options: MapOptions(
+                            center: _selectedLocation,
+                            zoom: 12.0,
+                            onTap: (tapPosition, point) {
+                              setState(() {
+                                _selectedLocation = point;
+                              });
+                            },
+                          ),
+                          children: [
+                            TileLayer(
+                              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              subdomains: ['a', 'b', 'c'],
+                            ),
+                            MarkerLayer(
+                              markers: [
+                                Marker(
+                                  point: _selectedLocation!,
+                                  width: 40,
+                                  height: 40,
+                                  builder: (ctx) => const Icon(
+                                    Icons.location_pin,
+                                    color: Colors.red,
+                                    size: 40,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                ),
+                if (_selectedLocation != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      "Lat: ${_selectedLocation!.latitude.toStringAsFixed(5)}, Lon: ${_selectedLocation!.longitude.toStringAsFixed(5)}",
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                  ),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
