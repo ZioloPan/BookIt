@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../config.dart';
+
 class ReviewService {
-  final String _baseUrl = 'http://192.168.100.12:3000/reviews';
+  final String _baseUrl = '${Config.baseUrl}/reviews';
 
   Future<List<Map<String, dynamic>>> getAllReviews() async {
     try {

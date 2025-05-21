@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../config.dart';
+
 class AppointmentService {
-  final String _baseUrl = 'http://192.168.100.12:3000/appointments';
+  final String _baseUrl = '${Config.baseUrl}/appointments';
 
   Future<List<Map<String, dynamic>>> getAllAppointments() async {
     try {

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../config.dart';
+
 class BusinessRegisterService {
-  final String _baseUrl = 'http://192.168.100.12:3000/businesses';
+  final String _baseUrl = '${Config.baseUrl}/businesses';
 
   Future<void> addBusiness({
     required String password,
