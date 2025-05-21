@@ -17,7 +17,7 @@ class PersonHomePage extends StatefulWidget {
 }
 
 class _PersonHomePageState extends State<PersonHomePage> {
-  final BusinessRegisterService _businessService = BusinessRegisterService();
+  final BusinessService _businessService = BusinessService();
   final PersonService _personService = PersonService();
   final TextEditingController _searchController = TextEditingController();
 

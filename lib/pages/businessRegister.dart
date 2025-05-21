@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../services/business-service.dart';
 import 'businessWelcome.dart';
 
@@ -28,6 +30,8 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
   final _postCodeController = TextEditingController();
   final _nipNumberController = TextEditingController();
 
+  LatLng? _selectedLocation;
+
   @override
   void dispose() {
     _passwordController.dispose();
@@ -53,10 +57,11 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
         _streetController.text.isEmpty ||
         _localNumberController.text.isEmpty ||
         _postCodeController.text.isEmpty ||
-        _nipNumberController.text.isEmpty) {
+        _nipNumberController.text.isEmpty ||
+        _selectedLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('All fields are required!'),
+          content: Text('All fields are required, including location!'),
           backgroundColor: Colors.red,
         ),
       );
@@ -73,7 +78,7 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
       return;
     }
 
-    final service = BusinessRegisterService();
+    final service = BusinessService();
 
     try {
       await service.addBusiness(
@@ -87,6 +92,8 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
         localNumber: _localNumberController.text,
         postCode: _postCodeController.text,
         nipNumber: _nipNumberController.text,
+        latitude: _selectedLocation!.latitude,
+        longitude: _selectedLocation!.longitude,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -176,6 +183,59 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                 _buildTextField(controller: _postCodeController, hintText: "Post code"),
                 const SizedBox(height: 16),
                 _buildTextField(controller: _nipNumberController, hintText: "NIP number"),
+                const SizedBox(height: 16),
+                const Text(
+                  "Pick salon location on map",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 250,
+                  child: FlutterMap(
+                    options: MapOptions(
+                      center: _selectedLocation ?? LatLng(52.2297, 21.0122),
+                      zoom: 12.0,
+                      onTap: (tapPosition, point) {
+                        setState(() {
+                          _selectedLocation = point;
+                        });
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        subdomains: ['a', 'b', 'c'],
+                      ),
+                      if (_selectedLocation != null)
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: _selectedLocation!,
+                              width: 40,
+                              height: 40,
+                              builder: (ctx) => const Icon(
+                                Icons.location_pin,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+                if (_selectedLocation != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      "Lat: ${_selectedLocation!.latitude.toStringAsFixed(5)}, Lon: ${_selectedLocation!.longitude.toStringAsFixed(5)}",
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                  ),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,

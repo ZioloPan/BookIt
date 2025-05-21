@@ -20,7 +20,7 @@ class PersonReviewPage extends StatefulWidget {
 class _PersonReviewPageState extends State<PersonReviewPage> {
   final AppointmentService _appointmentService = AppointmentService();
   final EmployeeService _employeeService = EmployeeService();
-  final BusinessRegisterService _businessService = BusinessRegisterService();
+  final BusinessService _businessService = BusinessService();
 
   List<Map<String, dynamic>> _appointments = [];
 

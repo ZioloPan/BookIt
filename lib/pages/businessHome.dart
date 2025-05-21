@@ -15,7 +15,7 @@ class BusinessHomePage extends StatefulWidget {
 }
 
 class _BusinessHomePageState extends State<BusinessHomePage> {
-  final BusinessRegisterService _businessService = BusinessRegisterService();
+  final BusinessService _businessService = BusinessService();
   final EmployeeService _employeeService = EmployeeService();
   final AppointmentService _appointmentService = AppointmentService();
   final PersonService _personService = PersonService();

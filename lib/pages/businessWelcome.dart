@@ -16,7 +16,7 @@ class BusinessWelcomePage extends StatefulWidget {
 
 class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
   final TextEditingController _emailController = TextEditingController();
-  final BusinessRegisterService _businessService = BusinessRegisterService();
+  final BusinessService _businessService = BusinessService();
   String? _errorMessage;
   List<Map<String, dynamic>> _allBusinesses = [];
 

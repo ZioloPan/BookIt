@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 import '../config.dart';
 
-class BusinessRegisterService {
+class BusinessService {
   final String _baseUrl = '${Config.baseUrl}/businesses';
 
   Future<void> addBusiness({
@@ -17,6 +17,8 @@ class BusinessRegisterService {
     required String localNumber,
     required String postCode,
     required String nipNumber,
+    required double latitude,
+    required double longitude,
   }) async {
     final Map<String, dynamic> businessData = {
       'password': password,
@@ -31,6 +33,8 @@ class BusinessRegisterService {
         'postCode': postCode,
       },
       'nipNumber': nipNumber,
+      'latitude': latitude,
+      'longitude': longitude,
     };
 
     try {
