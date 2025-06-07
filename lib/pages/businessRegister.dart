@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth-service.dart';
 import '../services/business-service.dart';
 import 'businessWelcome.dart';
 
@@ -17,6 +18,9 @@ class BusinessRegisterPage extends StatefulWidget {
 }
 
 class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
   final _repeatPasswordController = TextEditingController();
   final _salonNameController = TextEditingController();
@@ -30,6 +34,9 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
 
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneNumberController.dispose();
     _passwordController.dispose();
     _repeatPasswordController.dispose();
     _salonNameController.dispose();
@@ -44,7 +51,10 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
   }
 
   Future<void> _registerBusiness() async {
-    if (_passwordController.text.isEmpty ||
+    if (_firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _phoneNumberController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
         _repeatPasswordController.text.isEmpty ||
         _salonNameController.text.isEmpty ||
         _salonCategoryController.text.isEmpty ||
@@ -73,11 +83,20 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
       return;
     }
 
-    final service = BusinessRegisterService();
+    final authService = AuthService();
+    final businessService = BusinessRegisterService();
 
     try {
-      await service.addBusiness(
+      await authService.registerBusinessOwner(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        email: widget.email,
         password: _passwordController.text,
+        phoneNumber: _phoneNumberController.text,
+        nip: _nipNumberController.text,
+      );
+
+      await businessService.addBusiness(
         salonName: _salonNameController.text,
         salonCategory: _salonCategoryController.text,
         salonPhoneNumber: _salonPhoneNumberController.text,
@@ -129,6 +148,12 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                   width: 150,
                   height: 150,
                 ),
+                const SizedBox(height: 16),
+                _buildTextField(controller: _firstNameController, hintText: "First name"),
+                const SizedBox(height: 16),
+                _buildTextField(controller: _lastNameController, hintText: "Last name"),
+                const SizedBox(height: 16),
+                _buildTextField(controller: _phoneNumberController, hintText: "Phone number"),
                 const SizedBox(height: 16),
                 _buildTextField(controller: _passwordController, hintText: "Password", obscureText: true),
                 const SizedBox(height: 16),

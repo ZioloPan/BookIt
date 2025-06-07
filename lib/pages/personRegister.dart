@@ -35,6 +35,7 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
   }
 
   Future<void> _registerPerson() async {
+    print('🟡 Kliknięto continue');
     final name = _nameController.text.trim();
     final lastName = _lastNameController.text.trim();
     final password = _passwordController.text.trim();
@@ -43,50 +44,46 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
     final phone = _phoneController.text.trim();
 
     if (name.isEmpty || lastName.isEmpty || password.isEmpty || phone.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('All fields are required!'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showError('All fields are required!');
       return;
     }
 
     if (password != repeatPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match!'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showError('Passwords do not match!');
       return;
     }
 
     try {
-      await _personService.addPerson(
-        name: name,
+      print('🟢 Dane do rejestracji: $name $lastName $email $phone');
+      final success = await _personService.registerClient(
+        firstName: name,
         lastName: lastName,
         password: password,
         email: email,
-        phone: phone,
+        phoneNumber: phone,
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Person registered successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-
-      Navigator.pop(context, true);
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Person registered successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context, true);
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to register person: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showError(e.toString().replaceFirst('Exception: ', ''));
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   @override

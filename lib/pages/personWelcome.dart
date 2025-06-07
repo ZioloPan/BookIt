@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/person-service.dart';
+import '../services/user-service.dart';
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
 import 'personLogin.dart';
@@ -16,26 +16,8 @@ class PersonWelcomePage extends StatefulWidget {
 
 class _PersonWelcomePageState extends State<PersonWelcomePage> {
   final TextEditingController _emailController = TextEditingController();
-  final PersonService _personService = PersonService();
+  final UserService _userService = UserService();
   String? _errorMessage;
-  List<Map<String, dynamic>> _allPersons = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchPersons();
-  }
-
-  Future<void> _fetchPersons() async {
-    try {
-      final persons = await _personService.getAllPersons();
-      setState(() {
-        _allPersons = persons;
-      });
-    } catch (e) {
-      print('Error fetching persons: $e');
-    }
-  }
 
   Future<void> _navigateToRegisterPage(String email) async {
     final result = await Navigator.push(
@@ -47,27 +29,34 @@ class _PersonWelcomePageState extends State<PersonWelcomePage> {
         ),
       ),
     );
-
-    if (result == true) {
-      _fetchPersons();
-    }
   }
 
-  void _handleContinue() {
+  Future<void> _handleContinue() async {
     final email = _emailController.text.trim();
 
-    final isEmailUsed = _allPersons.any((person) => person['email'] == email);
-
-    setState(() {
-      if (email.isEmpty) {
+    if (email.isEmpty) {
+      setState(() {
         _errorMessage = "Please enter your email.";
-      } else if (isEmailUsed) {
-        _errorMessage = "Email already registered, Sign in!";
-      } else {
-        _errorMessage = null;
-        _navigateToRegisterPage(email);
-      }
-    });
+      });
+      return;
+    }
+
+    try {
+      final isEmailUsed = await _userService.emailExists(email);
+
+      setState(() {
+        if (isEmailUsed) {
+          _errorMessage = "Email already registered, Sign in!";
+        } else {
+          _errorMessage = null;
+          _navigateToRegisterPage(email);
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Error checking email. Please try again later.";
+      });
+    }
   }
 
   @override

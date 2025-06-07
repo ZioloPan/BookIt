@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/business-service.dart';
+import '../services/user-service.dart';
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
 import 'businessLogin.dart';
@@ -17,6 +18,7 @@ class BusinessWelcomePage extends StatefulWidget {
 class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
   final TextEditingController _emailController = TextEditingController();
   final BusinessRegisterService _businessService = BusinessRegisterService();
+  final UserService _userService = UserService();
   String? _errorMessage;
   List<Map<String, dynamic>> _allBusinesses = [];
 
@@ -37,32 +39,41 @@ class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
     }
   }
 
-void _handleContinue() {
-  final email = _emailController.text.trim();
+  Future<void> _handleContinue() async {
+    final email = _emailController.text.trim();
 
-  final isEmailUsed = _allBusinesses.any((business) => business['salonEmail'] == email);
-
-  setState(() {
     if (email.isEmpty) {
-      _errorMessage = "Please enter your email.";
-    } else if (isEmailUsed) {
-      _errorMessage = "Email already registered, Sign in!";
-    } else {
-      _errorMessage = null;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BusinessRegisterPage(
-            email: email,
-            backgroundColor: const Color.fromARGB(255, 244, 171, 165),
-          ),
-        ),
-      ).then((_) {
-        _fetchBusinesses();
+      setState(() {
+        _errorMessage = "Please enter your email.";
+      });
+      return;
+    }
+
+    try {
+      final isEmailUsed = await _userService.emailExists(email);
+
+      setState(() {
+        if (isEmailUsed) {
+          _errorMessage = "Email already registered, Sign in!";
+        } else {
+          _errorMessage = null;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BusinessRegisterPage(
+                email: email,
+                backgroundColor: const Color.fromARGB(255, 244, 171, 165),
+              ),
+            ),
+          );
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Error checking email. Please try again later.";
       });
     }
-  });
-}
+  }
 
   @override
   Widget build(BuildContext context) {

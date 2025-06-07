@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class BusinessRegisterService {
-  final String _baseUrl = 'http://192.168.100.12:3000/businesses';
+  final String _baseUrl = 'http://10.0.2.2:3000/business';
 
   Future<void> addBusiness({
-    required String password,
     required String salonName,
     required String salonCategory,
     required String salonPhoneNumber,
@@ -17,7 +16,6 @@ class BusinessRegisterService {
     required String nipNumber,
   }) async {
     final Map<String, dynamic> businessData = {
-      'password': password,
       'salonName': salonName,
       'salonCategory': salonCategory,
       'salonPhoneNumber': salonPhoneNumber,
