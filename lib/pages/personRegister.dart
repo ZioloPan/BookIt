@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/person-service.dart';
+import '../services/auth-service.dart';
 
 class PersonRegisterPage extends StatefulWidget {
   final String email;
@@ -22,7 +22,7 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
   final TextEditingController _repeatPasswordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  final PersonService _personService = PersonService();
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -55,7 +55,7 @@ class _PersonRegisterPageState extends State<PersonRegisterPage> {
 
     try {
       print('🟢 Dane do rejestracji: $name $lastName $email $phone');
-      final success = await _personService.registerClient(
+      final success = await _authService.registerClient(
         firstName: name,
         lastName: lastName,
         password: password,

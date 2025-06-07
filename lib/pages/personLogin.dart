@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/login-service.dart';
+import '../services/auth-service.dart'; // Zmieniono z login-service.dart
 import 'personHome.dart';
 import '../auth/auth_storage.dart';
 
@@ -19,13 +19,10 @@ class _PersonLoginPageState extends State<PersonLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Komunikat błędu (np. nieprawidłowe dane do logowania)
   String? _errorMessage;
 
-  // Tworzymy instancję LoginService
-  final LoginService _loginService = LoginService();
+  final AuthService _authService = AuthService(); // Zmieniono z LoginService
 
-  /// Obsługa przycisku "Continue"
   Future<void> _handleContinue() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -33,22 +30,12 @@ class _PersonLoginPageState extends State<PersonLoginPage> {
     print('email: $email');
     print('password: $password');
 
-    // Wywołujemy logowanie w serwisie:
-    final loginResponse = await _loginService.login(
+    final loginResponse = await _authService.login(
       email: email,
       password: password,
     );
 
     if (loginResponse != null) {
-      // Załóżmy, że loginResponse ma strukturę:
-      // {
-      //   "token": "...",
-      //   "user": {
-      //     "id": 2,
-      //     "firstName": "Krzysztof",
-      //     ...
-      //   }
-      // }
       final userMap = loginResponse['user'] as Map<String, dynamic>?;
       final token = loginResponse['token'];
 
@@ -61,13 +48,9 @@ class _PersonLoginPageState extends State<PersonLoginPage> {
       } else {
         print('Token is valid');
       }
-      
-      // Upewniamy się, że mamy userMap z polem "id"
-      if (userMap != null && userMap['id'] != null) {
-        // Konwertujemy ID na String, bo PersonHomePage oczekuje typu String
-        final personId = userMap['id'].toString();
 
-        // Przejdź do PersonHomePage (lub innej strony po zalogowaniu)
+      if (userMap != null && userMap['id'] != null) {
+        final personId = userMap['id'].toString();
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -75,13 +58,11 @@ class _PersonLoginPageState extends State<PersonLoginPage> {
           ),
         );
       } else {
-        // Brak usera lub ID
         setState(() {
           _errorMessage = 'Brak danych użytkownika w odpowiedzi serwera.';
         });
       }
     } else {
-      // Logowanie nieudane (null zwrócone przez loginService)
       setState(() {
         _errorMessage = 'Incorrect email or password.';
       });

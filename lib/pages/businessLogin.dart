@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/business-service.dart';
+import '../services/auth-service.dart';
+import '../auth/auth_storage.dart';
 import 'businessHome.dart';
 
 class BusinessLoginPage extends StatefulWidget {
@@ -17,47 +18,46 @@ class BusinessLoginPage extends StatefulWidget {
 class _BusinessLoginPageState extends State<BusinessLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  final AuthService _authService = AuthService();
   String? _errorMessage;
-  List<Map<String, dynamic>> _businesses = [];
-  final BusinessRegisterService _service = BusinessRegisterService();
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchBusinesses();
-  }
-
-  Future<void> _fetchBusinesses() async {
-    final businesses = await _service.getAllBusinesses();
-    setState(() {
-      _businesses = businesses;
-    });
-  }
-
-  void _handleContinue() {
+  Future<void> _handleContinue() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    final matchedBusiness = _businesses.firstWhere(
-      (business) =>
-          business['salonEmail'] == email && business['password'] == password,
-      orElse: () => {},
+    print('email: $email');
+    print('password: $password');
+
+    final loginResponse = await _authService.login(
+      email: email,
+      password: password,
     );
 
-    if (matchedBusiness.isNotEmpty) {
+    if (loginResponse != null) {
+      final userMap = loginResponse['user'] as Map<String, dynamic>?;
+      final token = loginResponse['token'];
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BusinessHomePage(
-            businessId: matchedBusiness['id'],
+      await storeToken(token);
+      print('Usermap: $userMap');
+      print('token: $token');
+
+      if (userMap != null && userMap['id'] != null) {
+        final businessOwnerId = userMap['id'].toString();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BusinessHomePage(businessId: businessOwnerId),
           ),
-        ),
-      );
+        );
+      } else {
+        setState(() {
+          _errorMessage = 'No user data found in response.';
+        });
+      }
     } else {
-
       setState(() {
-        _errorMessage = "Incorrect email or password.";
+        _errorMessage = 'Incorrect email or password.';
       });
     }
   }

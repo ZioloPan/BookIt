@@ -2,46 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PersonService {
-  final String _authBaseUrl = 'http://10.0.2.2:8080/auth';
   final String _legacyBaseUrl = 'http://10.0.2.2:8080/login';
-
-  // ✅ NOWA metoda rejestracji klienta (docelowa)
-  Future<bool> registerClient({
-    required String firstName,
-    required String lastName,
-    required String password,
-    required String email,
-    required String phoneNumber,
-  }) async {
-    final Map<String, dynamic> requestData = {
-      'firstName': firstName,
-      'lastName': lastName,
-      'password': password,
-      'email': email,
-      'phoneNumber': phoneNumber,
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse('$_authBaseUrl/register/client'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(requestData),
-      );
-
-      print('🔵 response.statusCode: ${response.statusCode}');
-      print('🔵 response.body: ${response.body}');
-
-      if (response.statusCode == 201) {
-        return true;
-      } else if (response.statusCode == 409) {
-        throw Exception('User with this email already exists');
-      } else {
-        throw Exception('Failed to register user');
-      }
-    } catch (e) {
-      throw Exception('Error during registration: $e');
-    }
-  }
 
   // 🔁 STARE METODY (tymczasowo używane)
   Future<List<Map<String, dynamic>>> getAllPersons() async {

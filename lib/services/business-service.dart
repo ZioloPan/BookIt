@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class BusinessRegisterService {
-  final String _baseUrl = 'http://10.0.2.2:3000/business';
+  final String _baseUrl = 'http://10.0.2.2:8080/business';
 
   Future<void> addBusiness({
     required String salonName,

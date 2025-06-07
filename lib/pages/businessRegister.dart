@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/auth-service.dart';
-import '../services/business-service.dart';
 import 'businessWelcome.dart';
 
 class BusinessRegisterPage extends StatefulWidget {
@@ -23,14 +22,9 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
   final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
   final _repeatPasswordController = TextEditingController();
-  final _salonNameController = TextEditingController();
-  final _salonCategoryController = TextEditingController();
-  final _salonPhoneNumberController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _streetController = TextEditingController();
-  final _localNumberController = TextEditingController();
-  final _postCodeController = TextEditingController();
   final _nipNumberController = TextEditingController();
+
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -39,96 +33,63 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
     _phoneNumberController.dispose();
     _passwordController.dispose();
     _repeatPasswordController.dispose();
-    _salonNameController.dispose();
-    _salonCategoryController.dispose();
-    _salonPhoneNumberController.dispose();
-    _cityController.dispose();
-    _streetController.dispose();
-    _localNumberController.dispose();
-    _postCodeController.dispose();
     _nipNumberController.dispose();
     super.dispose();
   }
 
-  Future<void> _registerBusiness() async {
-    if (_firstNameController.text.isEmpty ||
-        _lastNameController.text.isEmpty ||
-        _phoneNumberController.text.isEmpty ||
-        _passwordController.text.isEmpty ||
-        _repeatPasswordController.text.isEmpty ||
-        _salonNameController.text.isEmpty ||
-        _salonCategoryController.text.isEmpty ||
-        _salonPhoneNumberController.text.isEmpty ||
-        _cityController.text.isEmpty ||
-        _streetController.text.isEmpty ||
-        _localNumberController.text.isEmpty ||
-        _postCodeController.text.isEmpty ||
-        _nipNumberController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('All fields are required!'),
-          backgroundColor: Colors.red,
-        ),
-      );
+  Future<void> _registerBusinessOwner() async {
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final phone = _phoneNumberController.text.trim();
+    final password = _passwordController.text.trim();
+    final repeatPassword = _repeatPasswordController.text.trim();
+    final nip = _nipNumberController.text.trim();
+    final email = widget.email.trim();
+
+    if (firstName.isEmpty || lastName.isEmpty || phone.isEmpty || password.isEmpty || nip.isEmpty) {
+      _showError('All fields are required!');
       return;
     }
 
-    if (_passwordController.text != _repeatPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match!'),
-          backgroundColor: Colors.red,
-        ),
-      );
+    if (password != repeatPassword) {
+      _showError('Passwords do not match!');
       return;
     }
-
-    final authService = AuthService();
-    final businessService = BusinessRegisterService();
 
     try {
-      await authService.registerBusinessOwner(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        email: widget.email,
-        password: _passwordController.text,
-        phoneNumber: _phoneNumberController.text,
-        nip: _nipNumberController.text,
+      final success = await _authService.registerBusinessOwner(
+        firstName: firstName,
+        lastName: lastName,
+        password: password,
+        email: email,
+        phoneNumber: phone,
+        nip: nip,
       );
 
-      await businessService.addBusiness(
-        salonName: _salonNameController.text,
-        salonCategory: _salonCategoryController.text,
-        salonPhoneNumber: _salonPhoneNumberController.text,
-        salonEmail: widget.email,
-        city: _cityController.text,
-        street: _streetController.text,
-        localNumber: _localNumberController.text,
-        postCode: _postCodeController.text,
-        nipNumber: _nipNumberController.text,
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Business registered successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const BusinessWelcomePage(),
-        ),
-      );
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Business owner registered successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const BusinessWelcomePage()),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showError(e.toString().replaceFirst('Exception: ', ''));
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   @override
@@ -149,21 +110,13 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                   height: 150,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(controller: _firstNameController, hintText: "First name"),
-                const SizedBox(height: 16),
-                _buildTextField(controller: _lastNameController, hintText: "Last name"),
-                const SizedBox(height: 16),
-                _buildTextField(controller: _phoneNumberController, hintText: "Phone number"),
-                const SizedBox(height: 16),
                 _buildTextField(controller: _passwordController, hintText: "Password", obscureText: true),
                 const SizedBox(height: 16),
                 _buildTextField(controller: _repeatPasswordController, hintText: "Repeat Password", obscureText: true),
                 const SizedBox(height: 16),
-                _buildTextField(controller: _salonNameController, hintText: "Salon’s name"),
+                _buildTextField(controller: _firstNameController, hintText: "First name"),
                 const SizedBox(height: 16),
-                _buildTextField(controller: _salonCategoryController, hintText: "Salon’s category"),
-                const SizedBox(height: 16),
-                _buildTextField(controller: _salonPhoneNumberController, hintText: "Salon’s phone number"),
+                _buildTextField(controller: _lastNameController, hintText: "Last name"),
                 const SizedBox(height: 16),
                 TextField(
                   controller: TextEditingController(text: widget.email),
@@ -171,7 +124,7 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                   decoration: InputDecoration(
                     fillColor: Colors.grey[200],
                     filled: true,
-                    hintText: "Salon’s email",
+                    hintText: "Email",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide.none,
@@ -183,29 +136,14 @@ class _BusinessRegisterPageState extends State<BusinessRegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  "Salon’s address",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                _buildTextField(controller: _cityController, hintText: "City"),
-                const SizedBox(height: 16),
-                _buildTextField(controller: _streetController, hintText: "Street"),
-                const SizedBox(height: 16),
-                _buildTextField(controller: _localNumberController, hintText: "Local number"),
-                const SizedBox(height: 16),
-                _buildTextField(controller: _postCodeController, hintText: "Post code"),
+                _buildTextField(controller: _phoneNumberController, hintText: "Phone number"),
                 const SizedBox(height: 16),
                 _buildTextField(controller: _nipNumberController, hintText: "NIP number"),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _registerBusiness,
+                    onPressed: _registerBusinessOwner,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
