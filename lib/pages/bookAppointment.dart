@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../widgets/personNavigationBar.dart';
 import 'personHome.dart';
+import '../services/reservation-service.dart';
+import '../services/business-service.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   final int businessId;
@@ -19,36 +19,37 @@ class BookAppointmentPage extends StatefulWidget {
 }
 
 class _BookAppointmentPageState extends State<BookAppointmentPage> {
+  final ReservationService _reservationService = ReservationService();
+  final BusinessService _businessService = BusinessService();
+
   List<Map<String, dynamic>> _employees = [];
+  List<Map<String, dynamic>> _services = [];
   List<String> _availableSlots = [];
 
   String? _selectedEmployee;
+  String? _selectedService;
   DateTime? _selectedDate;
   String? _selectedSlot;
 
   @override
   void initState() {
     super.initState();
-    _fetchEmployees();
+    _fetchEmployeesAndServices();
   }
 
-  Future<void> _fetchEmployees() async {
+  Future<void> _fetchEmployeesAndServices() async {
     try {
-      final uri = Uri.parse('http://10.0.2.2:8080/business/${widget.businessId}');
-      final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-        setState(() {
-          _employees = List<Map<String, dynamic>>.from(decoded['businessDto']['workers']);
-        });
-      } else {
-        throw Exception('Failed to fetch business. Status code: ${response.statusCode}');
-      }
+      final business = await _businessService.getBusinessById(widget.businessId);
+      final businessDto = business['businessDto'] ?? business;
+      setState(() {
+        _employees = List<Map<String, dynamic>>.from(businessDto['workers'] ?? []);
+        _services = List<Map<String, dynamic>>.from(businessDto['services'] ?? []);
+      });
     } catch (e) {
-      print('Error loading employees: $e');
+      print('Error loading employees/services: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to load employees: $e'),
+          content: Text('Failed to load employees/services: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -56,10 +57,26 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   }
 
   Future<void> _fetchAvailableSlots() async {
-    if (_selectedEmployee == null || _selectedDate == null) return;
-
-    final String selectedDateString = _selectedDate!.toIso8601String().split('T').first;
-    // TODO: Fetch available slots for selected employee and date
+    if (_selectedService == null || _selectedDate == null) return;
+    try {
+      final slots = await _reservationService.getAvailableSlots(
+        formatDate(_selectedDate!),
+        int.parse(_selectedService!),
+        int.tryParse(_selectedEmployee ?? ''),
+      );
+      print('DEBUG: Otrzymane sloty: $slots');
+      setState(() {
+        _availableSlots = slots;
+        _selectedSlot = null;
+      });
+    } catch (e, stack) {
+      print('Błąd pobierania slotów: $e');
+      print('STACKTRACE: $stack');
+      setState(() {
+        _availableSlots = [];
+        _selectedSlot = null;
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -77,10 +94,20 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   }
 
   Future<void> _bookAppointment() async {
-    if (_selectedEmployee != null && _selectedDate != null && _selectedSlot != null) {
+    if (_selectedEmployee != null &&
+        _selectedDate != null &&
+        _selectedSlot != null &&
+        _selectedService != null) {
       try {
-        // TODO: Implement booking logic with selected values
+        // Format the date and time for the backend
+        String formattedDate = _selectedDate!.toIso8601String().split('T').first;
+        String selectedHour = _selectedSlot!; // Assuming _selectedSlot contains the time
 
+        await _reservationService.bookAppointment(
+          int.parse(_selectedService!),
+          formatDateTimeForBackend(_selectedDate!, _selectedSlot!),
+          int.parse(_selectedEmployee!),
+        );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Appointment booked successfully!'),
@@ -106,6 +133,16 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
     }
   }
 
+  String formatDate(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}";
+  }
+
+  String formatDateTimeForBackend(DateTime date, String hour) {
+    // hour: "09:00:00" -> "09:00"
+    final hourShort = hour.substring(0,5);
+    return "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year} $hourShort";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,6 +162,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                // Wybór pracownika
                 DropdownButtonFormField<String>(
                   value: _selectedEmployee,
                   decoration: InputDecoration(
@@ -149,6 +187,36 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   onChanged: (value) {
                     setState(() {
                       _selectedEmployee = value;
+                      _fetchAvailableSlots();
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                // Wybór serwisu
+                DropdownButtonFormField<String>(
+                  value: _selectedService,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 14.0,
+                    ),
+                  ),
+                  hint: const Text('Choose a service'),
+                  items: _services.map((service) {
+                    return DropdownMenuItem<String>(
+                      value: service['id'].toString(),
+                      child: Text('${service['name']} (${service['duration']} h)'),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedService = value;
                       _fetchAvailableSlots();
                     });
                   },
@@ -179,11 +247,12 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
                     child: Text(
-                      'Selected date: ${_selectedDate!.toIso8601String().split('T').first}',
+                      'Selected date: ${formatDate(_selectedDate!)}',
                       style: const TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
                 const SizedBox(height: 16),
+                // Sloty czasowe
                 DropdownButtonFormField<String>(
                   value: _selectedSlot,
                   decoration: InputDecoration(
@@ -216,7 +285,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   child: ElevatedButton(
                     onPressed: _selectedEmployee != null &&
                             _selectedDate != null &&
-                            _selectedSlot != null
+                            _selectedSlot != null &&
+                            _selectedService != null
                         ? _bookAppointment
                         : null,
                     style: ElevatedButton.styleFrom(

@@ -76,7 +76,7 @@ class _BusinessServicePageState extends State<BusinessServicePage> {
               ),
               TextField(
                 controller: durationController,
-                decoration: const InputDecoration(labelText: 'Duration (min)'),
+                decoration: const InputDecoration(labelText: 'Duration (hours)'),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -97,7 +97,7 @@ class _BusinessServicePageState extends State<BusinessServicePage> {
                     description: descriptionController.text,
                     price: double.tryParse(priceController.text) ?? 0,
                     category: categoryController.text,
-                    duration: int.tryParse(durationController.text) ?? 0,
+                    duration: int.tryParse(durationController.text) ?? 0, // duration w godzinach
                   );
                 } else {
                   await _servicesService.updateService(
@@ -107,7 +107,7 @@ class _BusinessServicePageState extends State<BusinessServicePage> {
                     description: descriptionController.text,
                     price: double.tryParse(priceController.text) ?? 0,
                     category: categoryController.text,
-                    duration: int.tryParse(durationController.text) ?? 0,
+                    duration: int.tryParse(durationController.text) ?? 0, // duration w godzinach
                   );
                 }
                 Navigator.pop(context);
@@ -166,7 +166,7 @@ class _BusinessServicePageState extends State<BusinessServicePage> {
                                   subtitle: Text(
                                     'Category: ${service['category'] ?? ''}\n'
                                     'Price: ${service['price'] ?? ''} zł\n'
-                                    'Duration: ${service['duration'] ?? ''} min',
+                                    'Duration: ${service['duration'] ?? ''} h', // godziny
                                   ),
                                   onTap: () => _showServiceDialog(service: service),
                                 ),

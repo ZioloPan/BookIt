@@ -12,10 +12,13 @@ class ReservationService {
     final response = await http.get(uri, headers: {
       'Authorization': 'Bearer $token'
     });
+    print('DEBUG: RESPONSE STATUS: ${response.statusCode}');
+    print('DEBUG: RESPONSE BODY: ${response.body}');
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      return List<Map<String, dynamic>>.from(decoded['reservationDtoList'] ?? []);
+      // ZAMIANA KLUCZA NA 'reservations'
+      return List<Map<String, dynamic>>.from(decoded['reservations'] ?? []);
     } else {
       throw Exception('Failed to fetch reservations: ${response.statusCode}');
     }
@@ -38,7 +41,7 @@ class ReservationService {
     }
   }
 
-  Future<List<String>> getAvailableSlots(String date, int serviceId) async {
+  Future<List<String>> getAvailableSlots(String date, int serviceId, int? workerId) async {
     final uri = Uri.parse('$_baseUrl/choose-date/$serviceId?date=$date');
     final token = await getStoredToken();
 
@@ -46,9 +49,24 @@ class ReservationService {
       'Authorization': 'Bearer $token'
     });
 
+    print('DEBUG: RESPONSE STATUS: ${response.statusCode}');
+    print('DEBUG: RESPONSE BODY: "${response.body}"');
+
     if (response.statusCode == 200) {
+      if (response.body.trim().isEmpty) {
+        print('DEBUG: Odpowiedź jest pusta!');
+        return [];
+      }
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      return List<String>.from(decoded['slots'] ?? []);
+      print('DEBUG: Zdekodowana odpowiedź: $decoded');
+      final workersSlots = decoded['workersSlots'] as List<dynamic>? ?? [];
+      if (workerId == null) return [];
+      final worker = workersSlots.firstWhere(
+        (ws) => ws['worker']['id'] == workerId,
+        orElse: () => null,
+      );
+      if (worker == null) return [];
+      return List<String>.from(worker['slots'] ?? []);
     } else {
       throw Exception('Failed to fetch slots');
     }
@@ -70,7 +88,10 @@ class ReservationService {
       }),
     );
 
-    if (response.statusCode != 200) {
+    print('DEBUG: RESPONSE STATUS: ${response.statusCode}');
+    print('DEBUG: RESPONSE BODY: "${response.body}"');
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
       throw Exception('Failed to book appointment');
     }
   }
