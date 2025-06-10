@@ -4,6 +4,8 @@ import 'welcome.dart';
 import 'addEmployee.dart';
 import 'deleteEmployee.dart';
 import 'editBusiness.dart';
+import 'availabilities.dart';
+import 'businessWorkingHours.dart';
 
 class BusinessProfilePage extends StatelessWidget {
   final String businessId;
@@ -94,6 +96,35 @@ class BusinessProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AvailabilitiesPage(businessId: businessId,),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 14.0,
+                      ),
+                    ),
+                    child: const Text('Availabilities'),
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
               const Text(
                 'Your Profile:',
@@ -132,7 +163,36 @@ class BusinessProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BusinessWorkingHoursPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 14.0,
+                      ),
+                    ),
+                    child: const Text('Saloon Working Hours'),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: SizedBox(

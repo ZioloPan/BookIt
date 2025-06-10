@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/business-service.dart';
 import '../services/user-service.dart';
 import 'termsOfService.dart';
 import 'privacyPolicy.dart';
@@ -20,7 +19,6 @@ class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
   // final BusinessRegisterService _businessService = BusinessRegisterService();
   final UserService _userService = UserService();
   String? _errorMessage;
-  List<Map<String, dynamic>> _allBusinesses = [];
 
   @override
   void initState() {
