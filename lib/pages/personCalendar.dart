@@ -63,7 +63,9 @@ class _PersonCalendarPageState extends State<PersonCalendarPage> {
         String serviceName = '';
         String serviceCategory = '';
         double? servicePrice;
-        int? serviceDuration;
+        double? serviceDuration;
+        String businessPhone = '';
+        String businessLocalNumber = '';
 
         if (worker != null) {
           employeeName = '${worker['firstName'] ?? ''} ${worker['lastName'] ?? ''}';
@@ -78,9 +80,11 @@ class _PersonCalendarPageState extends State<PersonCalendarPage> {
           if (businessId != null) {
             final business = await _businessService.getBusinessById(businessId);
             businessName = business['name'] ?? business['businessDto']?['name'] ?? 'Unknown';
+            businessPhone = business['phoneNumber'] ?? business['businessDto']?['phoneNumber'] ?? '';
             final address = business['address'] ?? business['businessDto']?['address'];
             if (address != null) {
-              businessAddress = '${address['city']}, ${address['street']} ${address['buildingNumber']}';
+              businessAddress = '${address['city']}, ${address['street']} ${address['buildingNumber'] ?? ''}';
+              businessLocalNumber = address['localNumber'] ?? '';
             }
           }
         }
@@ -92,6 +96,8 @@ class _PersonCalendarPageState extends State<PersonCalendarPage> {
         appointment['serviceCategory'] = serviceCategory;
         appointment['servicePrice'] = servicePrice;
         appointment['serviceDuration'] = serviceDuration;
+        appointment['businessPhone'] = businessPhone;
+        appointment['businessLocalNumber'] = businessLocalNumber;
       }
 
       setState(() {
@@ -112,6 +118,16 @@ class _PersonCalendarPageState extends State<PersonCalendarPage> {
     }
   }
 
+  // Funkcja do formatowania daty i godziny
+  String formatDateTime(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}  ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
   void _showAppointmentDetails(Map<String, dynamic> appointment) {
     showDialog(
       context: context,
@@ -124,12 +140,14 @@ class _PersonCalendarPageState extends State<PersonCalendarPage> {
               children: [
                 Text('Business: ${appointment['businessName']}'),
                 Text('Address: ${appointment['businessAddress']}'),
+                Text('Local number: ${appointment['businessLocalNumber']}'),
+                Text('Phone: ${appointment['businessPhone']}'),
                 Text('Employee: ${appointment['employeeName']}'),
                 Text('Service: ${appointment['serviceName']}'),
                 Text('Category: ${appointment['serviceCategory']}'),
                 Text('Price: ${appointment['servicePrice'] ?? '-'} zł'),
                 Text('Duration: ${appointment['serviceDuration']?.toStringAsFixed(1) ?? '-'} h'),
-                Text('Date: ${appointment['date']}'),
+                Text('Date: ${formatDateTime(appointment['date'])}'),
               ],
             ),
           ),
@@ -186,7 +204,7 @@ class _PersonCalendarPageState extends State<PersonCalendarPage> {
                                       style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                     subtitle: Text(
-                                      'Date: ${appointment['date']}',
+                                      'Date: ${formatDateTime(appointment['date'])}',
                                     ),
                                     onTap: () => _showAppointmentDetails(appointment),
                                   ),
