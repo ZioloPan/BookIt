@@ -1,3 +1,4 @@
+import 'package:bookit/pages/bussinessService.dart';
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
 import 'welcome.dart';
@@ -189,6 +190,36 @@ class BusinessProfilePage extends StatelessWidget {
                       ),
                     ),
                     child: const Text('Saloon Working Hours'),
+                  ),
+                ),
+              ),
+              // Dodany przycisk SaloonServices
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BusinessServicePage(businessId: businessId),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 14.0,
+                      ),
+                    ),
+                    child: const Text('Saloon Services'),
                   ),
                 ),
               ),
