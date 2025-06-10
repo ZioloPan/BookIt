@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/business-service.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class DeleteEmployeePage extends StatefulWidget {
@@ -22,6 +23,19 @@ class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
 
   Future<void> _loadEmployees() async {
     try {
+      final business = await BusinessService().getBusinessForOwner();
+      final businessDto = business?['businessDto'];
+      if (businessDto != null && businessDto['workers'] != null) {
+        setState(() {
+          _employees = List<Map<String, dynamic>>.from(businessDto['workers']);
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _employees = [];
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       print('Error loading employees: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -36,9 +50,16 @@ class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
     }
   }
 
-  Future<void> _deleteEmployee(String employeeId) async {
+  Future<void> _deleteEmployee(String email) async {
     try {
-
+      await BusinessService().deleteWorkerFromBusiness(int.parse(widget.businessId), email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Employee deleted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      _loadEmployees(); // reload list
     } catch (e) {
       print('Error deleting employee: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,9 +77,7 @@ class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
       backgroundColor: const Color.fromARGB(255, 244, 171, 165),
       body: SafeArea(
         child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
+            ? const Center(child: CircularProgressIndicator())
             : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -91,41 +110,33 @@ class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
                               itemBuilder: (context, index) {
                                 final employee = _employees[index];
                                 return Card(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  margin: const EdgeInsets.symmetric(vertical: 8.0),
                                   child: ListTile(
-                                    leading: const Icon(
-                                      Icons.person,
-                                      color: Colors.black,
-                                    ),
+                                    leading: const Icon(Icons.person, color: Colors.black),
                                     title: Text(
-                                      '${employee['name']} ${employee['lastName']}',
+                                      '${employee['firstName']} ${employee['lastName']}',
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Email: ${employee['email']}',
-                                          style: const TextStyle(
-                                              color: Colors.black87),
+                                          style: const TextStyle(color: Colors.black87),
                                         ),
                                         Text(
-                                          'Phone: ${employee['phone']}',
-                                          style: const TextStyle(
-                                              color: Colors.black87),
+                                          'Phone: ${employee['phoneNumber']}',
+                                          style: const TextStyle(color: Colors.black87),
                                         ),
                                       ],
                                     ),
                                     trailing: IconButton(
-                                      icon: const Icon(Icons.delete,
-                                          color: Colors.red),
+                                      icon: const Icon(Icons.delete, color: Colors.red),
                                       onPressed: () {
-                                        _deleteEmployee(employee['id']);
+                                        _deleteEmployee(employee['email']);
                                       },
                                     ),
                                   ),

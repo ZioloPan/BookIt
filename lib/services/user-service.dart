@@ -94,4 +94,27 @@ class UserService {
       throw Exception('Error fetching current user: $e');
     }
   }
+
+  Future<void> updateUser(int userId, Map<String, dynamic> updatedData) async {
+    final uri = Uri.parse('$_baseUrl/$userId');
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(updatedData),
+      );
+
+      print('DEBUG: POST /user/$userId response: ${response.statusCode} ${response.body}');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update user. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error updating user: $e');
+    }
+  }
+
 }

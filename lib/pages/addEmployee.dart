@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/business-service.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class AddEmployeePage extends StatefulWidget {
@@ -15,6 +16,8 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nipController = TextEditingController();
 
   @override
   void dispose() {
@@ -22,6 +25,8 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
     _lastNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
+    _nipController.dispose();
     super.dispose();
   }
 
@@ -30,8 +35,10 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
     final lastName = _lastNameController.text.trim();
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
+    final password = _passwordController.text.trim();
+    final nip = _nipController.text.trim();
 
-    if (name.isEmpty || lastName.isEmpty || email.isEmpty || phone.isEmpty) {
+    if (name.isEmpty || lastName.isEmpty || email.isEmpty || phone.isEmpty || password.isEmpty || nip.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('All fields are required!'),
@@ -41,7 +48,19 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
       return;
     }
 
+    final workerData = {
+      "firstName": name,
+      "lastName": lastName,
+      "email": email,
+      "password": password,
+      "phoneNumber": phone,
+      "userRole": "WORKER",
+      "nip": nip,
+    };
+
     try {
+      await BusinessService().addWorkerToBusiness(int.parse(widget.businessId), workerData);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Employee added successfully!'),
@@ -86,7 +105,11 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
               const SizedBox(height: 16),
               _buildTextField('Email', _emailController),
               const SizedBox(height: 16),
-              _buildTextField('Phone', _phoneController),
+              _buildTextField('Phone Number', _phoneController),
+              const SizedBox(height: 16),
+              _buildTextField('Password', _passwordController, isPassword: true),
+              const SizedBox(height: 16),
+              _buildTextField('NIP', _nipController),
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -119,9 +142,10 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
     );
   }
 
-  Widget _buildTextField(String hintText, TextEditingController controller) {
+  Widget _buildTextField(String hintText, TextEditingController controller, {bool isPassword = false}) {
     return TextField(
       controller: controller,
+      obscureText: isPassword,
       decoration: InputDecoration(
         fillColor: Colors.white,
         filled: true,

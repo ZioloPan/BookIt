@@ -26,7 +26,7 @@ class BusinessService {
   }
 
   Future<Map<String, dynamic>> getBusinessById(int businessId) async {
-    final uri = Uri.parse('$_baseUrl/\$businessId');
+    final uri = Uri.parse('$_baseUrl/$businessId');
 
     try {
       final response = await http.get(uri);
@@ -95,4 +95,88 @@ class BusinessService {
       throw Exception('Error fetching business for owner: $e');
     }
   }
+
+  Future<void> addWorkerToBusiness(int businessId, Map<String, dynamic> workerData) async {
+    final uri = Uri.parse('$_baseUrl/$businessId/worker');
+    final token = await _secureStorage.read(key: 'jwt_token');
+
+    if (token == null) {
+      throw Exception('JWT token not found');
+    }
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(workerData),
+      );
+
+      print('DEBUG: Odpowiedź serwera: ${response.statusCode} ${response.body}');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to add worker. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error adding worker: $e');
+    }
+  }
+
+  Future<void> deleteWorkerFromBusiness(int businessId, String email) async {
+    final uri = Uri.parse('$_baseUrl/$businessId/worker');
+    final token = await _secureStorage.read(key: 'jwt_token');
+
+    if (token == null) throw Exception('JWT token not found');
+
+    final body = jsonEncode({'email': email});
+    print('DEBUG: Sending DELETE to $uri with body: $body');
+
+    try {
+      final response = await http.delete(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: body,
+      );
+
+      print('DEBUG: DELETE response: ${response.statusCode} ${response.body}');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete worker. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error deleting worker: $e');
+    }
+  }
+
+  Future<void> updateBusiness(Map<String, dynamic> updatedBusiness) async {
+    final uri = Uri.parse('$_baseUrl/update');
+    final token = await _secureStorage.read(key: 'jwt_token');
+
+    if (token == null) throw Exception('JWT token not found');
+
+    try {
+      final response = await http.put(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(updatedBusiness),
+      );
+
+      print('DEBUG: PUT response: ${response.statusCode} ${response.body}');
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to update business. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error updating business: $e');
+    }
+  }
+
 }
