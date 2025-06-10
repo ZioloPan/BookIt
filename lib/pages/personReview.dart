@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/appointment-service.dart';
-import '../services/employee-service.dart';
 import '../services/business-service.dart';
 import '../widgets/personNavigationBar.dart';
 import 'personReviewDetails.dart';
@@ -18,63 +16,63 @@ class PersonReviewPage extends StatefulWidget {
 }
 
 class _PersonReviewPageState extends State<PersonReviewPage> {
-  final AppointmentService _appointmentService = AppointmentService();
-  final EmployeeService _employeeService = EmployeeService();
-  final BusinessRegisterService _businessService = BusinessRegisterService();
+  // final AppointmentService _appointmentService = AppointmentService();
+  // final EmployeeService _employeeService = EmployeeService();
+  // final BusinessRegisterService _businessService = BusinessRegisterService();
 
   List<Map<String, dynamic>> _appointments = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchPastAppointmentsWithDetails();
+    // _fetchPastAppointmentsWithDetails();
   }
 
-  Future<void> _fetchPastAppointmentsWithDetails() async {
-    try {
-      final allAppointments = await _appointmentService.getAllAppointments();
-      final now = DateTime.now();
+  // Future<void> _fetchPastAppointmentsWithDetails() async {
+  //   try {
+  //     final allAppointments = await _appointmentService.getAllAppointments();
+  //     final now = DateTime.now();
 
-      final filteredAppointments = allAppointments.where((appointment) {
-        final String appointmentDate = appointment['date'];
-        final String appointmentTime = appointment['time'];
+  //     final filteredAppointments = allAppointments.where((appointment) {
+  //       final String appointmentDate = appointment['date'];
+  //       final String appointmentTime = appointment['time'];
 
-        try {
-          final appointmentDateTime = DateTime.parse('$appointmentDate $appointmentTime:00');
-          return appointment['personId'] == widget.personId &&
-              appointmentDateTime.isBefore(now);
-        } catch (e) {
-          print('Error parsing date/time for appointment: $e');
-          return false;
-        }
-      }).toList();
+  //       try {
+  //         final appointmentDateTime = DateTime.parse('$appointmentDate $appointmentTime:00');
+  //         return appointment['personId'] == widget.personId &&
+  //             appointmentDateTime.isBefore(now);
+  //       } catch (e) {
+  //         print('Error parsing date/time for appointment: $e');
+  //         return false;
+  //       }
+  //     }).toList();
 
-      for (var appointment in filteredAppointments) {
-        final employee = await _employeeService.getEmployeeById(appointment['employeeId']);
-        final business = await _businessService.getBusinessById(employee?['businessId']);
+  //     for (var appointment in filteredAppointments) {
+  //       final employee = await _employeeService.getEmployeeById(appointment['employeeId']);
+  //       final business = await _businessService.getBusinessById(employee?['businessId']);
 
-        appointment['employeeName'] = employee != null
-            ? '${employee['name']} ${employee['lastName']}'
-            : 'Unknown Employee';
-        appointment['businessName'] = business != null
-            ? business['salonName']
-            : 'Unknown Business';
-        appointment['businessId'] = business?['id'] ?? 'Unknown';
-      }
+  //       appointment['employeeName'] = employee != null
+  //           ? '${employee['name']} ${employee['lastName']}'
+  //           : 'Unknown Employee';
+  //       appointment['businessName'] = business != null
+  //           ? business['salonName']
+  //           : 'Unknown Business';
+  //       appointment['businessId'] = business?['id'] ?? 'Unknown';
+  //     }
 
-      setState(() {
-        _appointments = filteredAppointments;
-      });
-    } catch (e) {
-      print('Error loading appointments: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to load appointments: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
+  //     setState(() {
+  //       _appointments = filteredAppointments;
+  //     });
+  //   } catch (e) {
+  //     print('Error loading appointments: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Failed to load appointments: $e'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

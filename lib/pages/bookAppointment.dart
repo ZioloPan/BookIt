@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../services/employee-service.dart';
-import '../services/appointment-service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../widgets/personNavigationBar.dart';
 import 'personHome.dart';
 
 class BookAppointmentPage extends StatefulWidget {
-  final String businessId;
+  final int businessId;
   final String personId;
 
   const BookAppointmentPage({
@@ -19,9 +19,6 @@ class BookAppointmentPage extends StatefulWidget {
 }
 
 class _BookAppointmentPageState extends State<BookAppointmentPage> {
-  final EmployeeService _employeeService = EmployeeService();
-  final AppointmentService _appointmentService = AppointmentService();
-
   List<Map<String, dynamic>> _employees = [];
   List<String> _availableSlots = [];
 
@@ -37,12 +34,16 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
   Future<void> _fetchEmployees() async {
     try {
-      final employees = await _employeeService.getAllEmployees();
-      setState(() {
-        _employees = employees
-            .where((employee) => employee['businessId'] == widget.businessId)
-            .toList();
-      });
+      final uri = Uri.parse('http://10.0.2.2:8080/business/${widget.businessId}');
+      final response = await http.get(uri);
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+        setState(() {
+          _employees = List<Map<String, dynamic>>.from(decoded['businessDto']['workers']);
+        });
+      } else {
+        throw Exception('Failed to fetch business. Status code: ${response.statusCode}');
+      }
     } catch (e) {
       print('Error loading employees: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,30 +59,14 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
     if (_selectedEmployee == null || _selectedDate == null) return;
 
     final String selectedDateString = _selectedDate!.toIso8601String().split('T').first;
-    final appointments = await _appointmentService.getAllAppointments();
-
-    final occupiedSlots = appointments
-        .where((appointment) =>
-            appointment['employeeId'] == _selectedEmployee &&
-            appointment['date'] == selectedDateString)
-        .map((appointment) => appointment['time'])
-        .toSet();
-
-    const allSlots = [
-      '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'
-    ];
-
-    setState(() {
-      _availableSlots = allSlots.where((slot) => !occupiedSlots.contains(slot)).toList();
-      _selectedSlot = null;
-    });
+    // TODO: Fetch available slots for selected employee and date
   }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null && picked != _selectedDate) {
@@ -94,12 +79,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   Future<void> _bookAppointment() async {
     if (_selectedEmployee != null && _selectedDate != null && _selectedSlot != null) {
       try {
-        await _appointmentService.addAppointment(
-          employeeId: _selectedEmployee!,
-          personId: widget.personId,
-          date: _selectedDate!.toIso8601String().split('T').first,
-          time: _selectedSlot!,
-        );
+        // TODO: Implement booking logic with selected values
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Appointment booked successfully!'),
@@ -161,8 +142,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   hint: const Text('Choose an employee'),
                   items: _employees.map((employee) {
                     return DropdownMenuItem<String>(
-                      value: employee['id'],
-                      child: Text('${employee['name']} ${employee['lastName']}'),
+                      value: employee['id'].toString(),
+                      child: Text('${employee['firstName']} ${employee['lastName']}'),
                     );
                   }).toList(),
                   onChanged: (value) {

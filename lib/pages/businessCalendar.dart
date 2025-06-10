@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/employee-service.dart';
-import '../services/appointment-service.dart';
-import '../services/person-service.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class BusinessCalendarPage extends StatefulWidget {
@@ -14,9 +11,6 @@ class BusinessCalendarPage extends StatefulWidget {
 }
 
 class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
-  final AppointmentService _appointmentService = AppointmentService();
-  final EmployeeService _employeeService = EmployeeService();
-  final PersonService _personService = PersonService();
 
   List<Map<String, dynamic>> _appointments = [];
   List<Map<String, dynamic>> _filteredAppointments = [];
@@ -32,22 +26,10 @@ class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
 
   Future<void> _loadData() async {
     try {
-      final employees = await _employeeService.getAllEmployees();
-      final appointments = await _appointmentService.getAllAppointments();
-      final persons = await _personService.getAllPersons();
+
 
       setState(() {
 
-        _employees = employees
-            .where((employee) => employee['businessId'] == widget.businessId)
-            .toList();
-
-        final businessEmployeeIds = _employees.map((e) => e['id']).toSet();
-        _appointments = appointments.where((appointment) {
-          return businessEmployeeIds.contains(appointment['employeeId']);
-        }).toList();
-
-        _persons = persons;
       });
     } catch (e) {
       print('Error loading data: $e');

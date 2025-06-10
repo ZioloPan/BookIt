@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
-import '../services/employee-service.dart';
 
 class AddEmployeePage extends StatefulWidget {
   final String businessId;
@@ -16,8 +15,6 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-
-  final EmployeeService _employeeService = EmployeeService();
 
   @override
   void dispose() {
@@ -45,14 +42,6 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
     }
 
     try {
-      await _employeeService.addEmployee(
-        businessId: widget.businessId,
-        name: name,
-        lastName: lastName,
-        email: email,
-        phone: phone,
-      );
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Employee added successfully!'),

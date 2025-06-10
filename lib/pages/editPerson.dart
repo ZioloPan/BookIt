@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/person-service.dart';
+
 import '../widgets/personNavigationBar.dart';
 
 class EditPersonPage extends StatefulWidget {
@@ -15,7 +15,7 @@ class EditPersonPage extends StatefulWidget {
 }
 
 class _EditPersonPageState extends State<EditPersonPage> {
-  final PersonService _personService = PersonService();
+
 
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
@@ -41,22 +41,11 @@ class _EditPersonPageState extends State<EditPersonPage> {
 
   Future<void> _loadPersonDetails() async {
     try {
-      final person = await _personService.getPersonById(widget.personId);
 
-      if (person != null) {
-        setState(() {
-          _firstNameController.text = person['name'] ?? '';
-          _lastNameController.text = person['lastName'] ?? '';
-          _emailController.text = person['email'] ?? '';
-          _phoneController.text = person['phone'] ?? '';
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-          _errorMessage = 'Person not found.';
-        });
-      }
+
+
+
+      
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -96,9 +85,9 @@ class _EditPersonPageState extends State<EditPersonPage> {
     }
 
     try {
-      final success = await _personService.updatePerson(widget.personId, updatedData);
 
-      if (success) {
+
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Person updated successfully!'),
@@ -107,7 +96,7 @@ class _EditPersonPageState extends State<EditPersonPage> {
           ),
         );
         Navigator.pop(context);
-      }
+
     } catch (e) {
       setState(() {
         _errorMessage = 'Failed to update person.';

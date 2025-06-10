@@ -35,7 +35,7 @@ class AuthService {
     }
   }
 
-  /// Rejestracja właściciela biznesu (bez salonu)
+  /// Rejestracja właściciela biznesu
   Future<bool> registerBusinessOwner({
     required String firstName,
     required String lastName,
@@ -75,7 +75,7 @@ class AuthService {
     }
   }
 
-  /// Rejestracja klienta (przeniesiona z PersonService)
+  /// Rejestracja klienta
   Future<bool> registerClient({
     required String firstName,
     required String lastName,
@@ -114,7 +114,6 @@ class AuthService {
     }
   }
 
-  /// Pobierz userId po e-mailu
   Future<String?> getUserIdByEmail(String email) async {
     final url = Uri.parse('$_baseUrl/auth/user-id?email=$email');
     try {

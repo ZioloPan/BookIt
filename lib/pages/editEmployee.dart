@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
-import '../services/employee-service.dart';
 import 'editEmployeeDetails.dart';
 
 class EditEmployeePage extends StatefulWidget {
@@ -13,7 +12,7 @@ class EditEmployeePage extends StatefulWidget {
 }
 
 class _EditEmployeePageState extends State<EditEmployeePage> {
-  final EmployeeService _employeeService = EmployeeService();
+
   List<Map<String, dynamic>> _employees = [];
 
   @override
@@ -24,12 +23,7 @@ class _EditEmployeePageState extends State<EditEmployeePage> {
 
   Future<void> _loadEmployees() async {
     try {
-      final employees = await _employeeService.getAllEmployees();
-      setState(() {
-        _employees = employees
-            .where((employee) => employee['businessId'] == widget.businessId)
-            .toList();
-      });
+
     } catch (e) {
       print('Error loading employees: $e');
       ScaffoldMessenger.of(context).showSnackBar(

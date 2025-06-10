@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
-import '../services/review-service.dart';
-import '../services/person-service.dart';
+
 import 'businessReviewDetails.dart';
 
 class BusinessReviewPage extends StatefulWidget {
@@ -14,8 +13,6 @@ class BusinessReviewPage extends StatefulWidget {
 }
 
 class _BusinessReviewPageState extends State<BusinessReviewPage> {
-  final ReviewService _reviewService = ReviewService();
-  final PersonService _personService = PersonService();
   List<Map<String, dynamic>> _reviews = [];
 
   @override
@@ -26,21 +23,7 @@ class _BusinessReviewPageState extends State<BusinessReviewPage> {
 
   Future<void> _loadReviews() async {
     try {
-      final reviews = await _reviewService.getAllReviews();
-      final filteredReviews = reviews.where((review) => review['businessId'] == widget.businessId).toList();
 
-      for (var review in filteredReviews) {
-        final person = await _personService.getPersonById(review['personId']);
-        if (person != null) {
-          review['clientName'] = '${person['name']} ${person['lastName']}';
-        } else {
-          review['clientName'] = 'Anonymous';
-        }
-      }
-
-      setState(() {
-        _reviews = filteredReviews;
-      });
     } catch (e) {
       print('Error loading reviews: $e');
     }

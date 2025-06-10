@@ -1,7 +1,9 @@
+import '../services/business-service.dart';
 import 'package:flutter/material.dart';
 import '../services/auth-service.dart';
 import '../auth/auth_storage.dart';
 import 'businessHome.dart';
+import 'businessCreate.dart';
 
 class BusinessLoginPage extends StatefulWidget {
   final Color backgroundColor;
@@ -26,8 +28,8 @@ class _BusinessLoginPageState extends State<BusinessLoginPage> {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    print('email: $email');
-    print('password: $password');
+    print('email: \$email');
+    print('password: \$password');
 
     final loginResponse = await _authService.login(
       email: email,
@@ -39,17 +41,28 @@ class _BusinessLoginPageState extends State<BusinessLoginPage> {
       final token = loginResponse['token'];
 
       await storeToken(token);
-      print('Usermap: $userMap');
-      print('token: $token');
+      print('Usermap: \$userMap');
+      print('token: \$token');
 
       if (userMap != null && userMap['id'] != null) {
-        final businessOwnerId = userMap['id'].toString();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BusinessHomePage(businessId: businessOwnerId),
-          ),
-        );
+        final business = await BusinessService().getBusinessForOwner();
+
+        if (business != null) {
+          final businessId = business['businessDto']['id'].toString();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BusinessHomePage(businessId: businessId),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const BusinessCreatePage(),
+            ),
+          );
+        }
       } else {
         setState(() {
           _errorMessage = 'No user data found in response.';

@@ -12,7 +12,7 @@ class EditBusinessPage extends StatefulWidget {
 
 class _EditBusinessPageState extends State<EditBusinessPage> {
   final _formKey = GlobalKey<FormState>();
-  final BusinessRegisterService _service = BusinessRegisterService();
+  // final BusinessRegisterService _service = BusinessRegisterService();
 
   final TextEditingController _salonNameController = TextEditingController();
   final TextEditingController _salonCategoryController = TextEditingController();
@@ -32,20 +32,20 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
 
   Future<void> _fetchBusinessDetails() async {
     try {
-      final businesses = await _service.getAllBusinesses();
-      final business = businesses.firstWhere((b) => b['id'] == widget.businessId);
+      // final businesses = await _service.getAllBusinesses();
+      // final business = businesses.firstWhere((b) => b['id'] == widget.businessId);
 
-      setState(() {
-        _salonNameController.text = business['salonName'] ?? '';
-        _salonCategoryController.text = business['salonCategory'] ?? '';
-        _salonPhoneNumberController.text = business['salonPhoneNumber'] ?? '';
-        _salonEmailController.text = business['salonEmail'] ?? '';
-        _cityController.text = business['address']['city'] ?? '';
-        _streetController.text = business['address']['street'] ?? '';
-        _localNumberController.text = business['address']['localNumber'] ?? '';
-        _postCodeController.text = business['address']['postCode'] ?? '';
-        _nipNumberController.text = business['nipNumber'] ?? '';
-      });
+      // setState(() {
+      //   _salonNameController.text = business['salonName'] ?? '';
+      //   _salonCategoryController.text = business['salonCategory'] ?? '';
+      //   _salonPhoneNumberController.text = business['salonPhoneNumber'] ?? '';
+      //   _salonEmailController.text = business['salonEmail'] ?? '';
+      //   _cityController.text = business['address']['city'] ?? '';
+      //   _streetController.text = business['address']['street'] ?? '';
+      //   _localNumberController.text = business['address']['localNumber'] ?? '';
+      //   _postCodeController.text = business['address']['postCode'] ?? '';
+      //   _nipNumberController.text = business['nipNumber'] ?? '';
+      // });
     } catch (e) {
       print('Error fetching business details: $e');
     }
@@ -67,21 +67,21 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
         'nipNumber': _nipNumberController.text,
       };
 
-      final success = await _service.updateBusiness(widget.businessId, updatedData);
+      // final success = await _service.updateBusiness(widget.businessId, updatedData);
 
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Business updated successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update business.')),
-        );
-      }
+      // if (success) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text('Business updated successfully!'),
+      //       backgroundColor: Colors.green,
+      //     ),
+      //   );
+      //   Navigator.pop(context);
+      // } else {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('Failed to update business.')),
+      //   );
+      // }
     }
   }
 

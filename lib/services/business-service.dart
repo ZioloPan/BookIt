@@ -1,106 +1,98 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
-class BusinessRegisterService {
+class BusinessService {
   final String _baseUrl = 'http://10.0.2.2:8080/business';
+  final _secureStorage = const FlutterSecureStorage();
 
-  Future<void> addBusiness({
-    required String salonName,
-    required String salonCategory,
-    required String salonPhoneNumber,
-    required String salonEmail,
-    required String city,
-    required String street,
-    required String localNumber,
-    required String postCode,
-    required String nipNumber,
-  }) async {
-    final Map<String, dynamic> businessData = {
-      'salonName': salonName,
-      'salonCategory': salonCategory,
-      'salonPhoneNumber': salonPhoneNumber,
-      'salonEmail': salonEmail,
-      'address': {
-        'city': city,
-        'street': street,
-        'localNumber': localNumber,
-        'postCode': postCode,
-      },
-      'nipNumber': nipNumber,
-    };
+  Future<List<Map<String, dynamic>>> getAllBusinesses() async {
+    final uri = Uri.parse(_baseUrl);
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+        final List<dynamic> businessList = decoded['businessDtoList'];
+
+        return businessList.cast<Map<String, dynamic>>();
+      } else {
+        throw Exception('Failed to load businesses. Status code: \${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching businesses: \$e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getBusinessById(int businessId) async {
+    final uri = Uri.parse('$_baseUrl/\$businessId');
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+        return decoded as Map<String, dynamic>;
+      } else {
+        throw Exception('Failed to fetch business. Status code: \${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching business details: \$e');
+    }
+  }
+
+  Future<void> addBusiness(Map<String, dynamic> businessData) async {
+    final uri = Uri.parse(_baseUrl);
+    final token = await _secureStorage.read(key: 'jwt_token');
+
+    if (token == null) {
+      throw Exception('JWT token not found');
+    }
 
     try {
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        uri,
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
         },
         body: jsonEncode(businessData),
       );
 
-      if (response.statusCode == 201) {
-        print('Business registered successfully!');
-      } else {
-        print('Failed to register business: ${response.statusCode}');
-        print('Response: ${response.body}');
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to add business. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error occurred while registering business: $e');
+      throw Exception('Error adding business: $e');
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAllBusinesses() async {
+
+  Future<Map<String, dynamic>?> getBusinessForOwner() async {
+    final uri = Uri.parse('$_baseUrl/owner');
+
     try {
-      final response = await http.get(Uri.parse(_baseUrl));
+      final token = await _secureStorage.read(key: 'jwt_token');
+      if (token == null) throw Exception('JWT token not found');
 
-      if (response.statusCode == 200) {
-        final List<dynamic> businesses = jsonDecode(response.body);
-        return businesses.cast<Map<String, dynamic>>();
-      } else {
-        print('Failed to fetch businesses: ${response.statusCode}');
-        return [];
-      }
-    } catch (e) {
-      print('Error occurred while fetching businesses: $e');
-      return [];
-    }
-  }
-
-  Future<Map<String, dynamic>?> getBusinessById(String businessId) async {
-    try {
-      final response = await http.get(Uri.parse('$_baseUrl/$businessId'));
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body) as Map<String, dynamic>;
-      } else {
-        print('Failed to fetch business: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error occurred while fetching business: $e');
-      return null;
-    }
-  }
-
-  Future<bool> updateBusiness(String businessId, Map<String, dynamic> updatedData) async {
-    try {
-      final response = await http.patch(
-        Uri.parse('$_baseUrl/$businessId'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(updatedData),
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
       );
 
       if (response.statusCode == 200) {
-        print('Business updated successfully!');
-        return true;
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+        return decoded as Map<String, dynamic>;
+      } else if (response.statusCode == 404) {
+        return null; // brak przypisanego biznesu
       } else {
-        print('Failed to update business: ${response.statusCode}');
-        print('Response: ${response.body}');
-        return false;
+        throw Exception('Failed to get business for owner: \${response.statusCode}');
       }
     } catch (e) {
-      print('Error occurred while updating business: $e');
-      return false;
+      throw Exception('Error fetching business for owner: $e');
     }
   }
 }

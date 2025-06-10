@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/business-service.dart';
-import '../services/employee-service.dart';
-import '../services/appointment-service.dart';
-import '../services/person-service.dart';
+import '../services/reservation-service.dart';
 import '../widgets/businessNavigationBar.dart';
 
 class BusinessHomePage extends StatefulWidget {
@@ -15,11 +13,6 @@ class BusinessHomePage extends StatefulWidget {
 }
 
 class _BusinessHomePageState extends State<BusinessHomePage> {
-  final BusinessRegisterService _businessService = BusinessRegisterService();
-  final EmployeeService _employeeService = EmployeeService();
-  final AppointmentService _appointmentService = AppointmentService();
-  final PersonService _personService = PersonService();
-
   String? _businessName;
   List<Map<String, dynamic>> _todayAppointments = [];
 
@@ -32,9 +25,9 @@ class _BusinessHomePageState extends State<BusinessHomePage> {
 
   Future<void> _loadBusinessData() async {
     try {
-      final business = await _businessService.getBusinessById(widget.businessId);
+      final business = await BusinessService().getBusinessById(int.parse(widget.businessId));
       setState(() {
-        _businessName = business?['salonName'] ?? 'Unknown Business';
+        _businessName = business['businessDto']['name'] ?? 'Unknown Business';
       });
     } catch (e) {
       print('Error loading business data: $e');
@@ -43,39 +36,22 @@ class _BusinessHomePageState extends State<BusinessHomePage> {
 
   Future<void> _fetchAppointmentsForToday() async {
     try {
-      final employees = await _employeeService.getAllEmployees();
-      final appointments = await _appointmentService.getAllAppointments();
-      final persons = await _personService.getAllPersons();
       final today = DateTime.now();
       final todayDateString = today.toIso8601String().split('T').first;
+      final reservations = await ReservationService().getReservationsForDay(todayDateString);
 
-      final businessEmployees = employees
-          .where((employee) => employee['businessId'] == widget.businessId)
-          .toList();
-
-      final businessEmployeeIds = businessEmployees.map((e) => e['id']).toSet();
-
-      final todayAppointments = appointments.where((appointment) {
-        return appointment['date'] == todayDateString &&
-            businessEmployeeIds.contains(appointment['employeeId']);
+      final filtered = reservations.where((res) {
+        return res['businessId'].toString() == widget.businessId;
       }).toList();
 
-      for (var appointment in todayAppointments) {
-        final employee = businessEmployees.firstWhere(
-          (e) => e['id'] == appointment['employeeId'],
-          orElse: () => {'name': 'Unknown', 'lastName': 'Employee'},
-        );
-        final person = persons.firstWhere(
-          (p) => p['id'] == appointment['personId'],
-          orElse: () => {'name': 'Unknown', 'lastName': 'Client'},
-        );
-
-        appointment['employeeName'] = '${employee['name']} ${employee['lastName']}';
-        appointment['personName'] = '${person['name']} ${person['lastName']}';
-      }
-
       setState(() {
-        _todayAppointments = todayAppointments;
+        _todayAppointments = filtered.map((res) {
+          return {
+            'employeeName': res['workerName'] ?? 'Unknown',
+            'personName': res['clientName'] ?? 'Unknown',
+            'time': res['time'] ?? 'Unknown',
+          };
+        }).toList();
       });
     } catch (e) {
       print('Error loading appointments: $e');

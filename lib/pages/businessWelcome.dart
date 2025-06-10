@@ -17,7 +17,7 @@ class BusinessWelcomePage extends StatefulWidget {
 
 class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
   final TextEditingController _emailController = TextEditingController();
-  final BusinessRegisterService _businessService = BusinessRegisterService();
+  // final BusinessRegisterService _businessService = BusinessRegisterService();
   final UserService _userService = UserService();
   String? _errorMessage;
   List<Map<String, dynamic>> _allBusinesses = [];
@@ -30,10 +30,10 @@ class _BusinessWelcomePageState extends State<BusinessWelcomePage> {
 
   Future<void> _fetchBusinesses() async {
     try {
-      final businesses = await _businessService.getAllBusinesses();
-      setState(() {
-        _allBusinesses = businesses;
-      });
+      // final businesses = await _businessService.getAllBusinesses();
+      // setState(() {
+      //   _allBusinesses = businesses;
+      // });
     } catch (e) {
       print('Error fetching businesses: $e');
     }

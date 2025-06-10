@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/review-service.dart';
 import '../widgets/personNavigationBar.dart';
 
 class PersonReviewDetailsPage extends StatefulWidget {
@@ -17,36 +16,36 @@ class PersonReviewDetailsPage extends StatefulWidget {
 }
 
 class _PersonReviewDetailsPageState extends State<PersonReviewDetailsPage> {
-  final ReviewService _reviewService = ReviewService();
+  // final ReviewService _reviewService = ReviewService();
   final TextEditingController _commentController = TextEditingController();
   int _selectedStars = 0;
 
-  Future<void> _submitReview() async {
-    try {
-      await _reviewService.addReview(
-        personId: widget.personId,
-        businessId: widget.businessId,
-        rating: _selectedStars,
-        comment: _commentController.text,
-      );
+  // Future<void> _submitReview() async {
+  //   try {
+  //     await _reviewService.addReview(
+  //       personId: widget.personId,
+  //       businessId: widget.businessId,
+  //       rating: _selectedStars,
+  //       comment: _commentController.text,
+  //     );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Review submitted successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('Review submitted successfully!'),
+  //         backgroundColor: Colors.green,
+  //       ),
+  //     );
 
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to submit review: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
+  //     Navigator.pop(context);
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Failed to submit review: $e'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -119,22 +118,22 @@ class _PersonReviewDetailsPageState extends State<PersonReviewDetailsPage> {
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _selectedStars > 0 && _commentController.text.isNotEmpty
-                        ? _submitReview
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text('Submit Review'),
-                  ),
+                  // child: ElevatedButton(
+                  //   onPressed: _selectedStars > 0 && _commentController.text.isNotEmpty
+                  //       ? _submitReview
+                  //       : null,
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.black,
+                  //     foregroundColor: Colors.white,
+                  //     padding: const EdgeInsets.symmetric(
+                  //       vertical: 14.0,
+                  //     ),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(8.0),
+                  //     ),
+                  //   ),
+                  //   child: const Text('Submit Review'),
+                  // ),
                 ),
               ],
             ),

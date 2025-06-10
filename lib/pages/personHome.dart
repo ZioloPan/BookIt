@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../widgets/personNavigationBar.dart';
 import '../services/business-service.dart';
-import '../services/person-service.dart';
+import '../services/user-service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'bookAppointment.dart';
+
 class PersonHomePage extends StatefulWidget {
   final String personId;
 
@@ -16,9 +18,10 @@ class PersonHomePage extends StatefulWidget {
 }
 
 class _PersonHomePageState extends State<PersonHomePage> {
-  final BusinessRegisterService _businessService = BusinessRegisterService();
-  final PersonService _personService = PersonService();
+  final BusinessService _businessService = BusinessService();
+  final UserService _userService = UserService();
   final TextEditingController _searchController = TextEditingController();
+  final _secureStorage = FlutterSecureStorage();
 
   List<Map<String, dynamic>> _allBusinesses = [];
   List<Map<String, dynamic>> _filteredBusinesses = [];
@@ -28,22 +31,35 @@ class _PersonHomePageState extends State<PersonHomePage> {
   void initState() {
     super.initState();
     _fetchBusinesses();
-    _fetchPersonDetails();
+    _fetchCurrentUser();
   }
 
   Future<void> _fetchBusinesses() async {
-    final businesses = await _businessService.getAllBusinesses();
-    setState(() {
-      _allBusinesses = businesses;
-      _filteredBusinesses = businesses;
-    });
+    try {
+      final businesses = await _businessService.getAllBusinesses();
+      setState(() {
+        _allBusinesses = businesses;
+        _filteredBusinesses = businesses;
+      });
+    } catch (e) {
+      debugPrint('Error fetching businesses: $e');
+    }
   }
 
-  Future<void> _fetchPersonDetails() async {
-    final person = await _personService.getPersonById(widget.personId);
-    setState(() {
-      _personName = person != null ? person['name'] : 'User';
-    });
+  Future<void> _fetchCurrentUser() async {
+    final token = await _secureStorage.read(key: 'jwt_token');
+    if (token == null) return;
+
+    try {
+      final user = await _userService.getCurrentUser(token);
+      setState(() {
+        _personName = user.firstName;
+      });
+    } catch (e) {
+      setState(() {
+        _personName = 'User';
+      });
+    }
   }
 
   void _filterBusinesses(String query) {
@@ -53,7 +69,7 @@ class _PersonHomePageState extends State<PersonHomePage> {
       } else {
         _filteredBusinesses = _allBusinesses
             .where((business) =>
-                business['salonName']?.toLowerCase().contains(query.toLowerCase()) ?? false)
+                business['name']?.toLowerCase().contains(query.toLowerCase()) ?? false)
             .toList();
       }
     });
@@ -111,13 +127,13 @@ class _PersonHomePageState extends State<PersonHomePage> {
                     : ListView.builder(
                         itemCount: _filteredBusinesses.length,
                         itemBuilder: (context, index) {
-                          final salon = _filteredBusinesses[index];
+                          final business = _filteredBusinesses[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8.0),
                             child: ListTile(
                               leading: const Icon(Icons.store, color: Colors.black),
                               title: Text(
-                                salon['salonName'] ?? 'Unnamed Salon',
+                                business['name'] ?? 'Unnamed Business',
                                 style: const TextStyle(
                                     color: Colors.black, fontWeight: FontWeight.bold),
                               ),
@@ -125,11 +141,11 @@ class _PersonHomePageState extends State<PersonHomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'City: ${salon['address']['city'] ?? 'No city available'}',
+                                    'Type: ${business['type'] ?? 'No type'}',
                                     style: const TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    'Category: ${salon['salonCategory'] ?? 'No category available'}',
+                                    'City: ${business['address']?['city'] ?? 'No city'}',
                                     style: const TextStyle(color: Colors.black87),
                                   ),
                                 ],
@@ -139,8 +155,8 @@ class _PersonHomePageState extends State<PersonHomePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => BookAppointmentPage(
-                                      businessId: salon['id'],
-                                      personId: widget.personId
+                                      businessId: business['id'],
+                                      personId: widget.personId,
                                     ),
                                   ),
                                 );

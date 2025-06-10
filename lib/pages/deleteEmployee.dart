@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
-import '../services/employee-service.dart';
 
 class DeleteEmployeePage extends StatefulWidget {
   final String businessId;
@@ -12,7 +11,6 @@ class DeleteEmployeePage extends StatefulWidget {
 }
 
 class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
-  final EmployeeService _employeeService = EmployeeService();
   List<Map<String, dynamic>> _employees = [];
   bool _isLoading = true;
 
@@ -24,13 +22,6 @@ class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
 
   Future<void> _loadEmployees() async {
     try {
-      final employees = await _employeeService.getAllEmployees();
-      setState(() {
-        _employees = employees
-            .where((employee) => employee['businessId'] == widget.businessId)
-            .toList();
-        _isLoading = false;
-      });
     } catch (e) {
       print('Error loading employees: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -47,20 +38,7 @@ class _DeleteEmployeePageState extends State<DeleteEmployeePage> {
 
   Future<void> _deleteEmployee(String employeeId) async {
     try {
-      final success = await _employeeService.deleteEmployee(employeeId);
-      if (success) {
-        setState(() {
-          _employees.removeWhere((employee) => employee['id'] == employeeId);
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Employee deleted successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        throw Exception('Failed to delete employee.');
-      }
+
     } catch (e) {
       print('Error deleting employee: $e');
       ScaffoldMessenger.of(context).showSnackBar(

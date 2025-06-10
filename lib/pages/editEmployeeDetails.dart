@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
-import '../services/employee-service.dart';
 
 class EditEmployeeDetailsPage extends StatefulWidget {
   final String id;
@@ -17,7 +16,6 @@ class EditEmployeeDetailsPage extends StatefulWidget {
 }
 
 class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
-  final EmployeeService _employeeService = EmployeeService();
 
   late TextEditingController _nameController;
   late TextEditingController _lastNameController;
@@ -37,39 +35,7 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
   }
 
   Future<void> _loadEmployeeDetails() async {
-    try {
-      final employee = await _employeeService.getEmployeeById(widget.id);
 
-      if (employee != null) {
-        setState(() {
-          _nameController.text = employee['name'] ?? '';
-          _lastNameController.text = employee['lastName'] ?? '';
-          _emailController.text = employee['email'] ?? '';
-          _phoneController.text = employee['phone'] ?? '';
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Employee not found.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      print('Error loading employee details: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to load employee details: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      Navigator.pop(context);
-    }
   }
 
   Future<void> _updateEmployee() async {
@@ -83,9 +49,9 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
     };
 
     try {
-      final success = await _employeeService.updateEmployee(widget.id, updatedEmployee);
 
-      if (success) {
+
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Employee updated successfully!'),
@@ -93,9 +59,7 @@ class _EditEmployeeDetailsPageState extends State<EditEmployeeDetailsPage> {
           ),
         );
         Navigator.pop(context, true);
-      } else {
-        throw Exception('Failed to update employee.');
-      }
+
     } catch (e) {
       print('Error updating employee: $e');
       ScaffoldMessenger.of(context).showSnackBar(
