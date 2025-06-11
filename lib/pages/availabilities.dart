@@ -47,7 +47,7 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
         _loading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Błąd podczas pobierania pracowników: $e')),
+        SnackBar(content: Text('Error while fetching workers: $e')),
       );
     }
   }
@@ -65,12 +65,11 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
       _startHourController.clear();
       _endHourController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Dostępność dodana!')),
+        const SnackBar(content: Text('Availability added!')),
       );
     } catch (e, stack) {
-      print('Błąd podczas dodawania dostępności: $e');
+      print('Error while adding availability: $e');
       print('STACKTRACE: $stack');
-      // Możesz usunąć SnackBar lub zostawić pusty blok catch
     }
   }
 
@@ -83,8 +82,7 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
       lastDate: DateTime(now.year + 1),
     );
     if (picked != null) {
-      // Format: dd-MM-yyyy
-      _dateController.text = "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
+      _dateController.text = "${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
     }
   }
 
@@ -110,22 +108,29 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 171, 165),
-      appBar: AppBar(
-        title: const Text('Availabilities'),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Worker selector
+                  const SizedBox(height: 16),
+                  const Center(
+                    child: Text(
+                      'Availabilities',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
                   DropdownButton<Map<String, dynamic>>(
                     value: _selectedWorker,
                     isExpanded: true,
-                    hint: const Text('Wybierz pracownika'),
+                    hint: const Text('Select worker'),
                     items: _workers
                         .map((worker) => DropdownMenuItem(
                               value: worker,
@@ -142,7 +147,6 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  // Add availability form only
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -159,14 +163,20 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Dodaj dostępność', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text('Add availability', style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         TextField(
                           controller: _dateController,
                           readOnly: true,
                           decoration: const InputDecoration(
-                            labelText: 'Data (YYYY-MM-DD)',
-                            border: OutlineInputBorder(),
+                            hintText: 'Date (YYYY-MM-DD)',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                           ),
                           onTap: () => _pickDate(context),
                         ),
@@ -175,8 +185,14 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
                           controller: _startHourController,
                           readOnly: true,
                           decoration: const InputDecoration(
-                            labelText: 'Godzina rozpoczęcia (HH:MM)',
-                            border: OutlineInputBorder(),
+                            hintText: 'Start hour (HH:MM)',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                           ),
                           onTap: () => _pickTime(context, _startHourController),
                         ),
@@ -185,8 +201,14 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
                           controller: _endHourController,
                           readOnly: true,
                           decoration: const InputDecoration(
-                            labelText: 'Godzina zakończenia (HH:MM)',
-                            border: OutlineInputBorder(),
+                            hintText: 'End hour (HH:MM)',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                           ),
                           onTap: () => _pickTime(context, _endHourController),
                         ),
@@ -198,8 +220,15 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 14.0,
+                              ),
                             ),
-                            child: const Text('Dodaj dostępność'),
+                            child: const Text('Add availability'),
                           ),
                         ),
                       ],

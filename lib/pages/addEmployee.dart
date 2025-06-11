@@ -85,54 +85,56 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Center(
-                child: Text(
-                  'Add New Employee',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              _buildTextField('Name', _nameController),
-              const SizedBox(height: 16),
-              _buildTextField('Last Name', _lastNameController),
-              const SizedBox(height: 16),
-              _buildTextField('Email', _emailController),
-              const SizedBox(height: 16),
-              _buildTextField('Phone Number', _phoneController),
-              const SizedBox(height: 16),
-              _buildTextField('Password', _passwordController, isPassword: true),
-              const SizedBox(height: 16),
-              _buildTextField('NIP', _nipController),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _addEmployee,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 14.0,
-                      ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Text(
+                    'Add New Employee',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
-                    child: const Text('Confirm'),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 32),
+                _buildTextField('Name', _nameController),
+                const SizedBox(height: 16),
+                _buildTextField('Last Name', _lastNameController),
+                const SizedBox(height: 16),
+                _buildTextField('Email', _emailController),
+                const SizedBox(height: 16),
+                _buildTextField('Phone Number', _phoneController),
+                const SizedBox(height: 16),
+                _buildTextField('Password', _passwordController, isPassword: true),
+                const SizedBox(height: 16),
+                _buildTextField('NIP', _nipController),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _addEmployee,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 14.0,
+                        ),
+                      ),
+                      child: const Text('Confirm'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

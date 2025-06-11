@@ -19,7 +19,6 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
   bool _editMode = false;
   bool _isAdd = false;
 
-  // Edycja godzin
   final List<String> _weekDays = [
     'MONDAY',
     'TUESDAY',
@@ -47,7 +46,6 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
       final business = await _businessService.getBusinessForOwner();
       final businessDto = business?['businessDto'] ?? business;
       final workingHours = businessDto?['workingHours'] ?? [];
-      print('DEBUG: workingHours z backendu: $workingHours');
       setState(() {
         _business = businessDto;
         _workingHours = workingHours;
@@ -58,7 +56,7 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
         _loading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Błąd podczas pobierania danych biznesu: $e')),
+        SnackBar(content: Text('Error while fetching business data: $e')),
       );
     }
   }
@@ -67,8 +65,6 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
     setState(() {
       _editMode = true;
       _isAdd = isAdd;
-      // Zawsze pokazuj wszystkie dni tygodnia
-      // _selectedDays = [];
       _startTimes = {};
       _endTimes = {};
       _isOpen = {};
@@ -80,7 +76,6 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
           _isOpen[day] = wh['isOpen'] ?? true;
         }
       } else {
-        // Domyślnie wszystkie dni otwarte 9-17
         for (var day in _weekDays) {
           _isOpen[day] = true;
           _startTimes[day] = const TimeOfDay(hour: 9, minute: 0);
@@ -119,7 +114,6 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
   Future<void> _saveWorkingHours() async {
     if (_business == null) return;
     final businessId = _business!['id'];
-    // ZAWSZE wysyłaj wszystkie dni tygodnia
     final List<Map<String, dynamic>> workingHoursList = _weekDays.map((day) {
       final start = _startTimes[day];
       final end = _endTimes[day];
@@ -152,11 +146,11 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
       });
       await _fetchBusiness();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Godziny otwarcia zapisane!')),
+        const SnackBar(content: Text('Working hours saved!')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Błąd podczas zapisywania godzin: $e')),
+        SnackBar(content: Text('Error while saving working hours: $e')),
       );
     }
   }
@@ -165,11 +159,6 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 171, 165),
-      appBar: AppBar(
-        title: const Text('Saloon Working Hours'),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -177,12 +166,24 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
               child: _editMode
                   ? _buildEditForm(context)
                   : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        const SizedBox(height: 16),
+                        const Center(
+                          child: Text(
+                            'Business Working Hours',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
                         if (_workingHours.isNotEmpty)
                           ...[
                             const Text(
-                              'Aktualne godziny otwarcia:',
+                              'Current working hours:',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
@@ -192,7 +193,7 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
                             ..._workingHours.map((wh) => Card(
                                   child: ListTile(
                                     title: Text(
-                                        '${wh['weekDay']}: ${wh['open'] == true ? '${wh['startTime']} - ${wh['endTime']}' : 'Zamknięte'}'),
+                                        '${wh['weekDay']}: ${wh['open'] == true ? '${wh['startTime']} - ${wh['endTime']}' : 'Closed'}'),
                                   ),
                                 )),
                             const SizedBox(height: 24),
@@ -203,6 +204,13 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.black,
                                   foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 14.0,
+                                  ),
                                 ),
                                 child: const Text('Edit'),
                               ),
@@ -216,6 +224,13 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,
                                 foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 14.0,
+                                ),
                               ),
                               child: const Text('Add working hours'),
                             ),
@@ -230,11 +245,10 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
     return ListView(
       children: [
         const Text(
-          'Ustaw godziny otwarcia dla każdego dnia tygodnia:',
+          'Set working hours for each day of the week:',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 12),
-        // Zawsze pokazuj wszystkie dni tygodnia
         ..._weekDays.map((day) => Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -255,7 +269,7 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
                             });
                           },
                         ),
-                        const Text('Otwarty'),
+                        const Text('Open'),
                       ],
                     ),
                     if (_isOpen[day] ?? false)
@@ -266,13 +280,13 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
                               onTap: () => _pickTime(context, day, true),
                               child: InputDecorator(
                                 decoration: const InputDecoration(
-                                  labelText: 'Godzina otwarcia',
+                                  labelText: 'Opening hour',
                                   border: OutlineInputBorder(),
                                 ),
                                 child: Text(
                                   _startTimes[day] != null
                                       ? _startTimes[day]!.format(context)
-                                      : 'Wybierz',
+                                      : 'Select',
                                 ),
                               ),
                             ),
@@ -283,13 +297,13 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
                               onTap: () => _pickTime(context, day, false),
                               child: InputDecorator(
                                 decoration: const InputDecoration(
-                                  labelText: 'Godzina zamknięcia',
+                                  labelText: 'Closing hour',
                                   border: OutlineInputBorder(),
                                 ),
                                 child: Text(
                                   _endTimes[day] != null
                                       ? _endTimes[day]!.format(context)
-                                      : 'Wybierz',
+                                      : 'Select',
                                 ),
                               ),
                             ),
@@ -308,6 +322,13 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
               foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 14.0,
+              ),
             ),
             child: const Text('Continue'),
           ),
@@ -321,7 +342,18 @@ class _BusinessWorkingHoursPageState extends State<BusinessWorkingHoursPage> {
                 _editMode = false;
               });
             },
-            child: const Text('Anuluj'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.black,
+              side: const BorderSide(color: Colors.black),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 14.0,
+              ),
+            ),
+            child: const Text('Cancel'),
           ),
         ),
       ],

@@ -50,7 +50,7 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
           _loading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Nie znaleziono biznesu przypisanego do właściciela.')),
+          const SnackBar(content: Text('No business assigned to the owner found.')),
         );
       }
     } catch (e) {
@@ -58,7 +58,7 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
         _loading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Błąd podczas pobierania danych biznesu: $e')),
+        SnackBar(content: Text('Error while fetching business data: $e')),
       );
     }
   }
@@ -81,13 +81,13 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
         await _businessService.updateBusiness(updatedBusiness);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Dane biznesu zostały zaktualizowane!')),
+            const SnackBar(content: Text('Business data updated!')),
           );
           Navigator.of(context).pop();
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Błąd podczas aktualizacji: $e')),
+          SnackBar(content: Text('Error while updating: $e')),
         );
       }
     }
@@ -110,104 +110,106 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 171, 165),
-      appBar: AppBar(
-        title: const Text('Edytuj Biznes'),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-      ),
       body: SafeArea(
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    children: [
-                      _buildLabeledTextField('Nazwa', _nameController, true),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField('Typ (np. HAIRSTYLE)', _typeController, true),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField('Telefon', _phoneNumberController, true, TextInputType.phone),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField('Email', _emailController, true, TextInputType.emailAddress),
-                      const SizedBox(height: 16),
-                      const Text('Adres', style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      _buildLabeledTextField('Miasto', _cityController, true),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField('Ulica', _streetController, true),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField('Numer lokalu', _localNumberController, true),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField('Kod pocztowy', _postCodeController, true),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _updateBusiness,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 14.0,
-                            ),
-                          ),
-                          child: const Text('Zapisz zmiany'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 16),
+                    const Center(
+                      child: Text(
+                        'Edit Business',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 32),
+                    Expanded(
+                      child: Form(
+                        key: _formKey,
+                        child: ListView(
+                          children: [
+                            _buildTextField('Business Name', _nameController, isRequired: true),
+                            const SizedBox(height: 16),
+                            _buildTextField('Type (e.g. HAIRSTYLE)', _typeController, isRequired: true),
+                            const SizedBox(height: 16),
+                            _buildTextField('Phone Number', _phoneNumberController, isRequired: true, keyboardType: TextInputType.phone),
+                            const SizedBox(height: 16),
+                            _buildTextField('Email', _emailController, isRequired: true, keyboardType: TextInputType.emailAddress),
+                            const SizedBox(height: 16),
+                            _buildTextField('City', _cityController, isRequired: true),
+                            const SizedBox(height: 16),
+                            _buildTextField('Street', _streetController, isRequired: true),
+                            const SizedBox(height: 16),
+                            _buildTextField('Local Number', _localNumberController, isRequired: true),
+                            const SizedBox(height: 16),
+                            _buildTextField('Post Code', _postCodeController, isRequired: true),
+                            const SizedBox(height: 32),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _updateBusiness,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 14.0,
+                                  ),
+                                ),
+                                child: const Text('Save changes'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
       ),
     );
   }
 
-  Widget _buildLabeledTextField(
-      String label, TextEditingController controller, bool isRequired,
-      [TextInputType keyboardType = TextInputType.text]) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+  Widget _buildTextField(
+    String hintText,
+    TextEditingController controller, {
+    bool isRequired = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide.none,
         ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            fillColor: Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 14.0,
-            ),
-          ),
-          validator: isRequired
-              ? (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Wprowadź $label';
-                  }
-                  return null;
-                }
-              : null,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 14.0,
         ),
-      ],
+      ),
+      validator: isRequired
+          ? (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter $hintText';
+              }
+              return null;
+            }
+          : null,
     );
   }
 }

@@ -80,71 +80,126 @@ class _BusinessCreatePageState extends State<BusinessCreatePage> {
         foregroundColor: Colors.white,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                if (_errorMessage != null)
-                  Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.red)),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Business Name'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter business name' : null,
-                ),
-                TextFormField(
-                  controller: _phoneController,
-                  decoration: const InputDecoration(labelText: 'Phone Number'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter phone number' : null,
-                ),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter email' : null,
-                ),
-                TextFormField(
-                  controller: _cityController,
-                  decoration: const InputDecoration(labelText: 'City'),
-                  validator: (value) => value!.isEmpty ? 'Enter city' : null,
-                ),
-                TextFormField(
-                  controller: _streetController,
-                  decoration: const InputDecoration(labelText: 'Street'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter street' : null,
-                ),
-                TextFormField(
-                  controller: _localNumberController,
-                  decoration: const InputDecoration(labelText: 'Local Number'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter local number' : null,
-                ),
-                TextFormField(
-                  controller: _postCodeController,
-                  decoration: const InputDecoration(labelText: 'Post Code'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter post code' : null,
-                ),
-                const SizedBox(height: 24),
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
-                        onPressed: _submitBusiness,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        child: const Text('Create Business'),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 16),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    width: 120,
+                    height: 120,
+                  ),
+                  const SizedBox(height: 16),
+                  if (_errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(color: Colors.red),
                       ),
-              ],
+                    ),
+                  _buildTextFormField(
+                    controller: _nameController,
+                    hintText: 'Business Name',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter business name' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextFormField(
+                    controller: _phoneController,
+                    hintText: 'Phone Number',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter phone number' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextFormField(
+                    controller: _emailController,
+                    hintText: 'Email',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter email' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextFormField(
+                    controller: _cityController,
+                    hintText: 'City',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter city' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextFormField(
+                    controller: _streetController,
+                    hintText: 'Street',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter street' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextFormField(
+                    controller: _localNumberController,
+                    hintText: 'Local Number',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter local number' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextFormField(
+                    controller: _postCodeController,
+                    hintText: 'Post Code',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter post code' : null,
+                  ),
+                  const SizedBox(height: 24),
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _submitBusiness,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 14.0,
+                              ),
+                            ),
+                            child: const Text('Continue'),
+                          ),
+                        ),
+                ],
+              ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextFormField({
+    required TextEditingController controller,
+    required String hintText,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 14.0,
         ),
       ),
     );

@@ -164,7 +164,7 @@ class BusinessProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: SizedBox(
@@ -194,7 +194,7 @@ class BusinessProfilePage extends StatelessWidget {
                 ),
               ),
               // Dodany przycisk SaloonServices
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: SizedBox(
