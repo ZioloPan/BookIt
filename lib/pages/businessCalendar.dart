@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/businessNavigationBar.dart';
+import '../services/reservation-service.dart';
+import '../services/business-service.dart';
 
 class BusinessCalendarPage extends StatefulWidget {
   final String businessId;
@@ -11,12 +13,12 @@ class BusinessCalendarPage extends StatefulWidget {
 }
 
 class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
-
   List<Map<String, dynamic>> _appointments = [];
   List<Map<String, dynamic>> _filteredAppointments = [];
   List<Map<String, dynamic>> _employees = [];
   List<Map<String, dynamic>> _persons = [];
   DateTime? _selectedDate;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -26,10 +28,20 @@ class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
 
   Future<void> _loadData() async {
     try {
-
+      final business =
+          await BusinessService().getBusinessById(int.parse(widget.businessId));
+      final businessDto = business['businessDto'];
+      final employees =
+          (businessDto?['workers'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+      final persons =
+          (businessDto?['clients'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
       setState(() {
-
+        _employees = employees;
+        _persons = persons;
+        _appointments = [];
+        _filteredAppointments = [];
+        _selectedDate = null;
       });
     } catch (e) {
       print('Error loading data: $e');
@@ -53,8 +65,29 @@ class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         _selectedDate = pickedDate;
-        _filterAppointmentsForSelectedDate();
+        _loading = true;
       });
+
+      final dateStr = "${pickedDate.year.toString().padLeft(4, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+      try {
+        final reservations = await ReservationService().getReservationsForDay(dateStr);
+        setState(() {
+          _appointments = List<Map<String, dynamic>>.from(reservations);
+          _filterAppointmentsForSelectedDate();
+          _loading = false;
+        });
+      } catch (e) {
+        print('Error loading data: $e');
+        setState(() {
+          _loading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load data: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -65,21 +98,20 @@ class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
 
     setState(() {
       _filteredAppointments = _appointments.where((appointment) {
-        return appointment['date'] == selectedDateString;
+        // Jeśli appointment['date'] to np. "2025-06-12T11:00:00", porównaj tylko datę
+        final datePart = (appointment['date'] as String).split('T').first;
+        return datePart == selectedDateString;
       }).toList();
 
       for (var appointment in _filteredAppointments) {
-        final employee = _employees.firstWhere(
-          (e) => e['id'] == appointment['employeeId'],
-          orElse: () => {'name': 'Unknown', 'lastName': 'Employee'},
-        );
-        final person = _persons.firstWhere(
-          (p) => p['id'] == appointment['personId'],
-          orElse: () => {'name': 'Unknown', 'lastName': 'Client'},
-        );
+        final client = appointment['client'] ?? {};
+        final employee = appointment['worker'] ?? {};
 
-        appointment['employeeName'] = '${employee['name']} ${employee['lastName']}';
-        appointment['clientName'] = '${person['name']} ${person['lastName']}';
+        appointment['employeeName'] = '${employee['firstName'] ?? 'Unknown'} ${employee['lastName'] ?? ''}';
+        appointment['clientName'] = '${client['firstName'] ?? 'Unknown'} ${client['lastName'] ?? ''}';
+        appointment['time'] = (appointment['date'] as String).split('T').length > 1
+            ? (appointment['date'] as String).split('T')[1].substring(0, 5)
+            : '';
       }
     });
   }
@@ -150,6 +182,10 @@ class _BusinessCalendarPageState extends State<BusinessCalendarPage> {
                         },
                       ),
               ),
+              if (_loading)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
             ],
           ),
         ),

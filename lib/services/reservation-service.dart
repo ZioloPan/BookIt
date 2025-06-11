@@ -34,8 +34,15 @@ class ReservationService {
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      print('DEBUG: Odpowiedź z /reservation/day: $decoded'); // 🔍 DEBUG PRINT
-      return List<Map<String, dynamic>>.from(decoded['reservationDtoList'] ?? []);
+      print('DEBUG: Odpowiedź z /reservation/day: $decoded');
+      print('DEBUG: Typ odpowiedzi: ${decoded.runtimeType}');
+      if (decoded is List) {
+        return List<Map<String, dynamic>>.from(decoded);
+      } else if (decoded is Map && decoded.containsKey('reservationDtoList')) {
+        return List<Map<String, dynamic>>.from(decoded['reservationDtoList'] ?? []);
+      } else {
+        return [];
+      }
     } else {
       throw Exception('Failed to fetch reservations for $date (code ${response.statusCode})');
     }
