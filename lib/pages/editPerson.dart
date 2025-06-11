@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/personNavigationBar.dart';
+import '../auth/auth_storage.dart'; // dla getStoredToken
+import '../services/user-service.dart';
 
 class EditPersonPage extends StatefulWidget {
   final String personId;
@@ -15,8 +17,6 @@ class EditPersonPage extends StatefulWidget {
 }
 
 class _EditPersonPageState extends State<EditPersonPage> {
-
-
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _emailController;
@@ -26,6 +26,9 @@ class _EditPersonPageState extends State<EditPersonPage> {
 
   bool _isLoading = true;
   String? _errorMessage;
+  int? _userId;
+
+  final UserService _userService = UserService();
 
   @override
   void initState() {
@@ -41,11 +44,23 @@ class _EditPersonPageState extends State<EditPersonPage> {
 
   Future<void> _loadPersonDetails() async {
     try {
-
-
-
-
-      
+      final token = await getStoredToken();
+      if (token == null) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Not logged in.';
+        });
+        return;
+      }
+      final user = await _userService.getCurrentUser(token);
+      setState(() {
+        _userId = user.id;
+        _firstNameController.text = user.firstName;
+        _lastNameController.text = user.lastName;
+        _emailController.text = user.email;
+        _phoneController.text = user.phoneNumber;
+        _isLoading = false;
+      });
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -74,10 +89,10 @@ class _EditPersonPageState extends State<EditPersonPage> {
     }
 
     final updatedData = {
-      'name': _firstNameController.text.trim(),
+      'firstName': _firstNameController.text.trim(),
       'lastName': _lastNameController.text.trim(),
       'email': _emailController.text.trim(),
-      'phone': _phoneController.text.trim(),
+      'phoneNumber': _phoneController.text.trim(),
     };
 
     if (_passwordController.text.isNotEmpty) {
@@ -85,18 +100,23 @@ class _EditPersonPageState extends State<EditPersonPage> {
     }
 
     try {
+      if (_userId == null) {
+        setState(() {
+          _errorMessage = 'User ID not loaded.';
+        });
+        return;
+      }
 
+      await _userService.updateUser(_userId!, updatedData);
 
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Person updated successfully!'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        Navigator.pop(context);
-
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Person updated successfully!'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      Navigator.pop(context);
     } catch (e) {
       setState(() {
         _errorMessage = 'Failed to update person.';

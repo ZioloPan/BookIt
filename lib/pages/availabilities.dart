@@ -82,7 +82,8 @@ class _AvailabilitiesPageState extends State<AvailabilitiesPage> {
       lastDate: DateTime(now.year + 1),
     );
     if (picked != null) {
-      _dateController.text = "${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      _dateController.text =
+          "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year.toString().padLeft(4, '0')}";
     }
   }
 

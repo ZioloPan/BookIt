@@ -7,6 +7,7 @@ import 'deleteEmployee.dart';
 import 'editBusiness.dart';
 import 'availabilities.dart';
 import 'businessWorkingHours.dart';
+import 'editBusinessOwner.dart';
 
 class BusinessProfilePage extends StatelessWidget {
   final String businessId;
@@ -220,6 +221,35 @@ class BusinessProfilePage extends StatelessWidget {
                       ),
                     ),
                     child: const Text('Saloon Services'),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditBusinessOwnerPage(personId: businessId),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 14.0,
+                      ),
+                    ),
+                    child: const Text('Edit your profile'),
                   ),
                 ),
               ),

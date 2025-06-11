@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../auth/auth_storage.dart';
 
 class User {
   final int id;
@@ -84,9 +85,25 @@ class UserService {
         headers: {'Authorization': 'Bearer $token'},
       );
 
+      print('getCurrentUser status: ${response.statusCode}');
+      print('getCurrentUser body: ${response.body}');
+
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
-        return User.fromJson(json['user']);
+        print('getCurrentUser decoded json: $json');
+        // Dla business ownera:
+        if (json['businessOwner'] != null) {
+          return User.fromJson(json['businessOwner']);
+        }
+        // Dla innych ról, np. klient:
+        if (json['user'] != null) {
+          return User.fromJson(json['user']);
+        }
+        // Jeśli backend zwraca bezpośrednio usera:
+        if (json['id'] != null) {
+          return User.fromJson(json);
+        }
+        throw Exception('Unknown user response structure: $json');
       } else {
         throw Exception('Failed to get current user. Status: ${response.statusCode}');
       }
@@ -99,17 +116,23 @@ class UserService {
     final uri = Uri.parse('$_baseUrl/$userId');
 
     try {
+      final token = await getStoredToken();
+      if (token == null) {
+        throw Exception('No token found. User not logged in.');
+      }
+
       final response = await http.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
         },
         body: jsonEncode(updatedData),
       );
 
       print('DEBUG: POST /user/$userId response: ${response.statusCode} ${response.body}');
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 204 && response.statusCode != 201) {
         throw Exception('Failed to update user. Status: ${response.statusCode}');
       }
     } catch (e) {
